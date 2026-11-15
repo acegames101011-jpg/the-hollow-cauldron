@@ -187,7 +187,7 @@
         <div class="header-controls">
             <div class="multiplayer-badge" id="mp-status-badge">
                 <span style="width:8px; height:8px; background:#56e073; border-radius:50%; display:inline-block;" id="mp-dot"></span>
-                <span id="mp-status-text">Multijugador Activo (Tab-Sync)</span>
+                <span id="mp-status-text">Conexión local · Sala en la nube disponible</span>
             </div>
             <div class="time-control">
                 <div>
@@ -1738,6 +1738,13 @@ Resultado: ${evalResult.statusText}`);
                 return;
             }
             if (!confirm(activeRoomCode ? "¿Seguro que deseas restaurar el taller compartido? Se borrarán los datos de TODOS los jugadores." : "¿Seguro que deseas restaurar el taller a sus valores iniciales? Se borrarán los datos locales actuales.")) return;
+            if (activeRoomCode) {
+                db = StorageService.getDefaultState();
+                refreshAllUI();
+                StorageService.save(db);
+                showToast("El Director ha reiniciado el taller compartido");
+                return;
+            }
             localStorage.removeItem(StorageService.KEY);
             location.reload();
         }
