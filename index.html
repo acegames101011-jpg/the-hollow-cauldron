@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#171914">
+  <title>The Hollow Cauldron | Mesa alquímica</title>
+  <style>
+    :root{color-scheme:dark;--bg:#171914;--panel:#22251e;--panel2:#2b2e25;--line:#494b3d;--gold:#c7a66a;--paper:#e7dcc1;--muted:#aaa58f;--green:#7c956b}
+    *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#3a3b2b 0,#1b1d17 55%,#131510 100%);color:var(--paper);font:15px/1.45 Georgia,serif;min-height:100vh}
+    button,input{font:inherit}button{cursor:pointer}
+    .shell{max-width:1200px;margin:auto;padding:28px 22px 48px}
+    header{display:flex;justify-content:space-between;align-items:center;gap:18px;border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:22px}
+    .eyebrow{color:var(--gold);font:11px/1.4 system-ui,sans-serif;letter-spacing:.2em;text-transform:uppercase}
+    h1{font-size:clamp(25px,4vw,38px);font-weight:normal;letter-spacing:.04em;margin:4px 0}
+    .subtitle{color:var(--muted);font:13px system-ui,sans-serif}
+    .status{border:1px solid var(--line);border-radius:999px;padding:7px 12px;color:var(--muted);font:11px system-ui,sans-serif;white-space:nowrap}
+    .notice{background:#302b1e;border:1px solid #665638;color:#ddc99e;border-radius:8px;padding:12px 15px;margin:0 0 20px;font:13px/1.5 system-ui,sans-serif}
+    .layout{display:grid;grid-template-columns:minmax(250px, .85fr) minmax(0,1.6fr);gap:18px}
+    .panel{background:linear-gradient(160deg,#292c23,#20221c);border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:0 12px 32px #0003}
+    .panel-head{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px}
+    h2{font-size:16px;font-weight:normal;letter-spacing:.06em;margin:0;color:#e4d4b1}
+    .panel-body{padding:16px}
+    .muted{color:var(--muted);font:12px/1.5 system-ui,sans-serif}
+    .add-form{display:grid;gap:9px;margin-bottom:16px}
+    input{width:100%;background:#171914;border:1px solid var(--line);border-radius:6px;padding:10px 11px;color:var(--paper);outline:none}
+    input:focus{border-color:var(--gold)}
+    .btn{border:1px solid #806c46;background:#51442e;color:#f1e4c7;border-radius:6px;padding:9px 12px;font:12px system-ui,sans-serif}
+    .btn:hover{background:#675538}.btn.ghost{background:transparent;border-color:var(--line);color:var(--muted)}
+    .ingredient-list{display:grid;gap:8px;min-height:100px}
+    .ingredient{display:flex;align-items:center;gap:10px;background:#34372c;border:1px solid #555744;border-radius:7px;padding:10px;cursor:grab;user-select:none}
+    .ingredient:active{cursor:grabbing}.ingredient .sigil{width:34px;height:34px;border:1px solid #87764f;border-radius:50%;display:grid;place-items:center;color:var(--gold);font-size:17px;flex:none}
+    .ingredient strong{display:block;font-size:14px;font-weight:normal}.ingredient small{display:block;color:var(--muted);font:11px system-ui,sans-serif}
+    .ingredient .remove{margin-left:auto;background:none;border:0;color:#a99d83;font-size:18px;padding:2px 5px}
+    .workbench{display:grid;gap:14px}
+    .dropzone{border:1px dashed #82734e;border-radius:9px;background:radial-gradient(ellipse at center,#343527,#22241d);padding:18px;min-height:225px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;transition:.15s}
+    .dropzone.over{background:#3b3a28;border-color:var(--gold);box-shadow:inset 0 0 0 2px #c7a66a33}
+    .cauldron{width:112px;height:82px;border:3px solid #8a7954;border-radius:12px 12px 42px 42px;background:linear-gradient(#59604b,#292d24);box-shadow:inset 0 -14px 20px #10120f,0 8px 18px #0007;display:grid;place-items:center;color:#d4bd83;font-size:30px;margin:4px auto 12px;position:relative}
+    .cauldron:before{content:"";position:absolute;width:130px;height:9px;border:3px solid #8a7954;border-bottom:0;border-radius:50% 50% 0 0;top:-8px}
+    .cauldron-items{display:flex;flex-wrap:wrap;justify-content:center;gap:7px;margin-top:12px}
+    .placed{background:#4a4935;border:1px solid #8a7954;border-radius:5px;padding:5px 8px;font:11px system-ui,sans-serif}
+    .empty{color:var(--muted);font:12px system-ui,sans-serif}
+    .tools{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+    .tool{background:#2b2e25;border:1px solid var(--line);border-radius:7px;padding:13px 8px;text-align:center;color:#d7c9a8}
+    .tool span{display:block;font-size:23px;margin-bottom:5px}.tool small{font:11px system-ui,sans-serif;color:var(--muted)}
+    .actions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+    footer{text-align:center;color:#777966;font:11px system-ui,sans-serif;margin-top:22px}
+    @media(max-width:760px){.layout{grid-template-columns:1fr}.shell{padding:18px 13px 35px}header{align-items:flex-start}.status{font-size:10px}.tools{grid-template-columns:repeat(3,1fr)}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <div><div class="eyebrow">Nyvra Horizons · Herramienta de campaña</div><h1>The Hollow Cauldron</h1><div class="subtitle">Mesa de trabajo alquímica</div></div>
+      <div class="status">PROTOTIPO · LOCAL</div>
+    </header>
+    <div class="notice"><strong>Versión de prueba:</strong> esta mesa funciona en tu navegador, pero todavía no sincroniza jugadores ni guarda inventarios. Estamos construyendo primero la interfaz; el multijugador llegará en una fase posterior.</div>
+    <section class="layout">
+      <article class="panel">
+        <div class="panel-head"><h2>Ingredientes disponibles</h2><span class="muted" id="count">0 fichas</span></div>
+        <div class="panel-body">
+          <form class="add-form" id="addForm">
+            <label class="muted" for="ingredientName">Crear ficha de ingrediente de prueba</label>
+            <input id="ingredientName" maxlength="40" placeholder="Nombre del ingrediente" required>
+            <input id="ingredientAffinity" maxlength="30" placeholder="Afinidad o nota (opcional)">
+            <button class="btn" type="submit">＋ Añadir ficha</button>
+          </form>
+          <p class="muted">Arrastra una ficha hasta el caldero para colocarla en la preparación. Estas fichas son temporales y no representan ingredientes oficiales.</p>
+          <div class="ingredient-list" id="ingredientList"><div class="empty">Todavía no hay ingredientes. Crea una ficha de prueba arriba.</div></div>
+        </div>
+      </article>
+      <article class="panel">
+        <div class="panel-head"><h2>Zona de elaboración</h2><span class="muted">Preparación actual</span></div>
+        <div class="panel-body workbench">
+          <div class="dropzone" id="dropzone">
+            <div class="cauldron">⚗</div>
+            <strong>Caldero</strong>
+            <div class="muted">Arrastra aquí los ingredientes que quieras utilizar</div>
+            <div class="cauldron-items" id="cauldronItems"><span class="empty">El caldero está vacío</span></div>
+          </div>
+          <div><div class="eyebrow" style="margin-bottom:9px">Herramientas del taller</div><div class="tools">
+            <div class="tool"><span>⚗</span>Caldero<small>Elaboración</small></div>
+            <div class="tool"><span>◉</span>Mortero<small>Procesamiento</small></div>
+            <div class="tool"><span>▤</span>Prensa<small>Extracción</small></div>
+          </div></div>
+          <div class="actions"><button class="btn ghost" id="clearCauldron" type="button">Vaciar caldero</button><button class="btn" id="reset" type="button">Reiniciar prueba</button></div>
+        </div>
+      </article>
+    </section>
+    <footer>THE HOLLOW CAULDRON · Prototipo de interfaz · No contiene todavía las reglas ni las fórmulas de Nyvra</footer>
+  </main>
+  <script>
+    const $ = s => document.querySelector(s);
+    let ingredients = [];
+    let placed = [];
+    let nextId = 1;
+    function render(){
+      $('#count').textContent = ingredients.length + (ingredients.length===1?' ficha':' fichas');
+      const list=$('#ingredientList'); list.innerHTML='';
+      if(!ingredients.length) list.innerHTML='<div class="empty">Todavía no hay ingredientes. Crea una ficha de prueba arriba.</div>';
+      ingredients.forEach(item=>{
+        const card=document.createElement('div'); card.className='ingredient'; card.draggable=true; card.dataset.id=item.id;
+        card.innerHTML='<div class="sigil">✧</div><div><strong></strong><small></small></div><button class="remove" title="Eliminar ficha" aria-label="Eliminar ficha">×</button>';
+        card.querySelector('strong').textContent=item.name;
+        card.querySelector('small').textContent=item.affinity||'Sin nota adicional';
+        card.addEventListener('dragstart',e=>{e.dataTransfer.setData('text/plain',String(item.id));e.dataTransfer.effectAllowed='copy'});
+        card.querySelector('.remove').addEventListener('click',()=>{ingredients=ingredients.filter(x=>x.id!==item.id);placed=placed.filter(x=>x!==item.id);render()});
+        list.appendChild(card);
+      });
+      const target=$('#cauldronItems');target.innerHTML='';
+      const selected=placed.map(id=>ingredients.find(x=>x.id===id)).filter(Boolean);
+      if(!selected.length) target.innerHTML='<span class="empty">El caldero está vacío</span>';
+      selected.forEach(item=>{const tag=document.createElement('span');tag.className='placed';tag.textContent=item.name;target.appendChild(tag)});
+    }
+    $('#addForm').addEventListener('submit',e=>{
+      e.preventDefault();const name=$('#ingredientName').value.trim();if(!name)return;
+      ingredients.push({id:nextId++,name,affinity:$('#ingredientAffinity').value.trim()});
+      $('#ingredientName').value='';$('#ingredientAffinity').value='';render();
+    });
+    const zone=$('#dropzone');
+    zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('over')});
+    zone.addEventListener('dragleave',()=>zone.classList.remove('over'));
+    zone.addEventListener('drop',e=>{e.preventDefault();zone.classList.remove('over');const id=Number(e.dataTransfer.getData('text/plain'));if(ingredients.some(x=>x.id===id)&&!placed.includes(id)){placed.push(id);render()}});
+    $('#clearCauldron').addEventListener('click',()=>{placed=[];render()});
+    $('#reset').addEventListener('click',()=>{ingredients=[];placed=[];nextId=1;render()});
+    render();
+  </script>
+</body>
+</html>
