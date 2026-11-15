@@ -204,6 +204,17 @@
         </div>
     </header>
 
+    <section id="room-panel" style="background:#17130f; border-bottom:1px solid #3d352e; padding:0.8rem 1.5rem; display:flex; gap:0.7rem; align-items:center; flex-wrap:wrap;">
+        <strong style="color:#e0b84c;">Taller compartido</strong>
+        <input id="room-code-input" type="text" maxlength="8" placeholder="Código de sala" autocomplete="off" style="width:150px; margin:0; text-transform:uppercase;">
+        <button type="button" class="btn btn-success" id="btn-create-room">Crear taller</button>
+        <button type="button" class="btn" id="btn-join-room">Unirse</button>
+        <span id="room-status" style="font-size:0.8rem; color:#a39688;">Conectando con el servicio...</span>
+        <span id="room-code-display" style="font-size:0.85rem; color:#e0b84c; font-weight:bold;"></span>
+        <button type="button" class="btn btn-blue" id="btn-copy-room" style="display:none;">Copiar código</button>
+        <button type="button" class="btn btn-danger" id="btn-leave-room" style="display:none;">Salir de sala</button>
+    </section>
+
     <nav class="nav-tabs" id="main-nav">
         <button type="button" class="tab-btn active" data-tab="ingredients">Fichas de Ingredientes</button>
         <button type="button" class="tab-btn" data-tab="inventory">Inventario General</button>
@@ -529,8 +540,37 @@
 
     <div class="status-toast" id="status-toast">Guardado en el grimorio</div>
 
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
     <script>
-        /* SISTEMA MULTIJUGADOR VÍA BROADCASTCHANNEL (TAB-SYNC) Y STORAGE SERVICE */
+        /* FIREBASE: AUTENTICACIÓN ANÓNIMA Y TALLER COMPARTIDO */
+        const firebaseConfig = {
+            apiKey: "AIzaSyD6_LBMO4cdYgPWG447kP_P-EzICinOE0Q",
+            authDomain: "nyvra-horizons.firebaseapp.com",
+            projectId: "nyvra-horizons",
+            storageBucket: "nyvra-horizons.firebasestorage.app",
+            messagingSenderId: "71382860058",
+            appId: "1:71382860058:web:a58ac81ebde663cc736ca3",
+            measurementId: "G-PSPR2KY78Z"
+        };
+        let cloudDb = null;
+        let authUser = null;
+        let activeRoomCode = null;
+        let activeRoomRole = null;
+        let roomRevision = 0;
+        let roomUnsubscribe = null;
+        let cloudSaveQueue = Promise.resolve();
+        let applyingRemoteState = false;
+
+        try {
+            if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+            cloudDb = firebase.firestore();
+        } catch (firebaseInitError) {
+            console.error("No se pudo inicializar Firebase:", firebaseInitError);
+        }
+
+        /* SISTEMA MULTIJUGADOR VÍA FIREBASE Y STORAGE SERVICE */
         const MULTIPLAYER_CHANNEL = 'nyvra_hollow_cauldron_sync_v5';
         const bc = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel(MULTIPLAYER_CHANNEL) : null;
 
@@ -659,9 +699,15 @@
             save(state, broadcast = true) {
                 state.meta.lastUpdated = new Date().toISOString();
                 localStorage.setItem(this.KEY, JSON.stringify(state));
-                showToast("Sincronizado en Red del Taller");
+                showToast(activeRoomCode ? "Cambios guardados; sincronizando taller..." : "Guardado localmente");
                 if (broadcast && bc) {
                     bc.postMessage({ type: 'SYNC_STATE', payload: state });
+                }
+                if (activeRoomCode && cloudDb && !applyingRemoteState) {
+                    cloudSaveQueue = cloudSaveQueue.then(() => pushSharedState()).catch(error => {
+                        console.error("Error sincronizando el taller:", error);
+                        showRoomStatus("Error de sincronización. Revisa conexión y permisos.", true);
+                    });
                 }
             }
         };
@@ -671,12 +717,187 @@
 
         if (bc) {
             bc.onmessage = (event) => {
-                if (event.data && event.data.type === 'SYNC_STATE') {
+                if (event.data && event.data.type === 'SYNC_STATE' && !activeRoomCode) {
                     db = event.data.payload;
                     refreshAllUI();
                     showToast("¡Actualización multijugador recibida!");
                 }
             };
+        }
+
+        function showRoomStatus(message, isError = false) {
+            const el = document.getElementById('room-status');
+            if (!el) return;
+            el.textContent = message;
+            el.style.color = isError ? '#e05638' : '#a39688';
+        }
+
+        function setRoomUI(code = null, role = null) {
+            activeRoomCode = code;
+            activeRoomRole = role;
+            const display = document.getElementById('room-code-display');
+            const copy = document.getElementById('btn-copy-room');
+            const leave = document.getElementById('btn-leave-room');
+            if (display) display.textContent = code ? `Código: ${code} · ${role === 'dm' ? 'Director' : 'Alquimista'}` : '';
+            if (copy) copy.style.display = code ? 'inline-block' : 'none';
+            if (leave) leave.style.display = code ? 'inline-block' : 'none';
+            const isPlayer = !!code && role !== 'dm';
+            document.querySelectorAll('#main-nav .tab-btn[data-tab="bases"], #main-nav .tab-btn[data-tab="potions"]').forEach(btn => {
+                btn.style.display = isPlayer ? 'none' : '';
+            });
+            if (isPlayer) {
+                document.getElementById('bases').classList.remove('active');
+                document.getElementById('potions').classList.remove('active');
+                const firstTab = document.querySelector('#main-nav .tab-btn[data-tab="ingredients"]');
+                if (firstTab) firstTab.click();
+            }
+        }
+
+        function makeRoomCode() {
+            const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            const bytes = new Uint8Array(8);
+            crypto.getRandomValues(bytes);
+            return Array.from(bytes, b => alphabet[b % alphabet.length]).join('');
+        }
+
+        async function pushSharedState() {
+            if (!activeRoomCode || !cloudDb) return;
+            const ref = cloudDb.collection('rooms').doc(activeRoomCode).collection('shared').doc('current');
+            const snapshot = JSON.parse(JSON.stringify(db));
+            const expectedRevision = roomRevision;
+            let conflict = false;
+            const result = await cloudDb.runTransaction(async transaction => {
+                const snap = await transaction.get(ref);
+                if (!snap.exists) throw new Error("El documento compartido de la sala no existe.");
+                const remoteRevision = Number(snap.data().revision || 0);
+                if (remoteRevision !== expectedRevision) {
+                    conflict = true;
+                    return;
+                }
+                transaction.update(ref, {
+                    state: snapshot,
+                    revision: remoteRevision + 1,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                return remoteRevision + 1;
+            });
+            if (conflict || result === undefined) {
+                await loadRoomState(activeRoomCode);
+                showToast("Otro alquimista modificó el taller. Se actualizó el estado.");
+                return;
+            }
+            roomRevision = result;
+            showRoomStatus(`Sala ${activeRoomCode} · ${activeRoomRole === 'dm' ? 'Director' : 'Jugador'} · sincronizado`);
+            showToast("Taller compartido actualizado");
+        }
+
+        async function loadRoomState(code) {
+            const ref = cloudDb.collection('rooms').doc(code).collection('shared').doc('current');
+            const snap = await ref.get();
+            if (!snap.exists) throw new Error("La sala no tiene un estado de taller.");
+            const data = snap.data();
+            roomRevision = Number(data.revision || 0);
+            db = data.state;
+            localStorage.setItem(StorageService.KEY, JSON.stringify(db));
+            refreshAllUI();
+        }
+
+        function listenToRoom(code) {
+            if (roomUnsubscribe) roomUnsubscribe();
+            const ref = cloudDb.collection('rooms').doc(code).collection('shared').doc('current');
+            roomUnsubscribe = ref.onSnapshot(snapshot => {
+                if (!snapshot.exists) return;
+                const data = snapshot.data();
+                const incomingRevision = Number(data.revision || 0);
+                if (incomingRevision > roomRevision) {
+                    roomRevision = incomingRevision;
+                    applyingRemoteState = true;
+                    db = data.state;
+                    localStorage.setItem(StorageService.KEY, JSON.stringify(db));
+                    refreshAllUI();
+                    applyingRemoteState = false;
+                    showToast("El taller recibió cambios de otro jugador");
+                }
+            }, error => {
+                console.error("Listener de sala:", error);
+                showRoomStatus("Se perdió la conexión con la sala.", true);
+            });
+        }
+
+        async function createSharedRoom() {
+            if (!authUser || !cloudDb) throw new Error("Firebase todavía no está listo.");
+            if (activeRoomCode) throw new Error("Ya estás dentro de una sala. Sal primero.");
+            const code = makeRoomCode();
+            const roomRef = cloudDb.collection('rooms').doc(code);
+            const stateRef = roomRef.collection('shared').doc('current');
+            const initialState = JSON.parse(JSON.stringify(db));
+            await cloudDb.runTransaction(async transaction => {
+                const existing = await transaction.get(roomRef);
+                if (existing.exists) throw new Error("Colisión de código. Intenta crear otra sala.");
+                transaction.set(roomRef, {
+                    code,
+                    ownerUid: authUser.uid,
+                    members: [authUser.uid],
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                transaction.set(stateRef, {
+                    state: initialState,
+                    revision: 0,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            });
+            setRoomUI(code, 'dm');
+            listenToRoom(code);
+            showRoomStatus(`Taller creado. Comparte el código ${code}.`);
+            document.getElementById('room-code-input').value = code;
+        }
+
+        async function joinSharedRoom() {
+            if (!authUser || !cloudDb) throw new Error("Firebase todavía no está listo.");
+            if (activeRoomCode) throw new Error("Ya estás dentro de una sala. Sal primero.");
+            const code = document.getElementById('room-code-input').value.trim().toUpperCase();
+            if (!/^[A-HJ-NP-Z2-9]{8}$/.test(code)) throw new Error("El código debe tener 8 caracteres.");
+            const roomRef = cloudDb.collection('rooms').doc(code);
+            const roomSnap = await roomRef.get();
+            if (!roomSnap.exists) throw new Error("No existe una sala con ese código.");
+            const room = roomSnap.data();
+            if (!room.members.includes(authUser.uid)) {
+                await roomRef.update({ members: firebase.firestore.FieldValue.arrayUnion(authUser.uid) });
+            }
+            const latestRoom = await roomRef.get();
+            activeRoomRole = latestRoom.data().ownerUid === authUser.uid ? 'dm' : 'player';
+            await loadRoomState(code);
+            setRoomUI(code, activeRoomRole);
+            listenToRoom(code);
+            showRoomStatus(`Conectado al taller ${code}. Inventario compartido.`);
+        }
+
+        async function leaveSharedRoom() {
+            if (roomUnsubscribe) roomUnsubscribe();
+            roomUnsubscribe = null;
+            setRoomUI(null, null);
+            roomRevision = 0;
+            showRoomStatus("Fuera de la sala. Los cambios serán locales.");
+            db = StorageService.load();
+            refreshAllUI();
+        }
+
+        function bindRoomControls() {
+            document.getElementById('btn-create-room').addEventListener('click', async () => {
+                try { await createSharedRoom(); }
+                catch (error) { console.error(error); showRoomStatus(error.message, true); }
+            });
+            document.getElementById('btn-join-room').addEventListener('click', async () => {
+                try { await joinSharedRoom(); }
+                catch (error) { console.error(error); showRoomStatus(error.message, true); }
+            });
+            document.getElementById('btn-leave-room').addEventListener('click', leaveSharedRoom);
+            document.getElementById('btn-copy-room').addEventListener('click', async () => {
+                try {
+                    await navigator.clipboard.writeText(activeRoomCode);
+                    showToast("Código copiado");
+                } catch (_) { showRoomStatus(`Código de sala: ${activeRoomCode}`); }
+            });
         }
 
         function showToast(msg) {
@@ -692,6 +913,7 @@
             document.querySelectorAll('#main-nav .tab-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const targetTab = btn.getAttribute('data-tab');
+                    if (activeRoomRole === 'player' && (targetTab === 'bases' || targetTab === 'potions')) return;
                     document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
                     document.querySelectorAll('#main-nav .tab-btn').forEach(b => b.classList.remove('active'));
                     document.getElementById(targetTab).classList.add('active');
@@ -1511,13 +1733,30 @@ Resultado: ${evalResult.statusText}`);
         }
 
         function resetAllWorkshop() {
-            if (!confirm("¿Seguro que deseas restaurar el taller a sus valores iniciales? Se borrarán los datos locales actuales.")) return;
+            if (activeRoomCode && activeRoomRole !== 'dm') {
+                alert("Solo el Director puede reiniciar el taller.");
+                return;
+            }
+            if (!confirm(activeRoomCode ? "¿Seguro que deseas restaurar el taller compartido? Se borrarán los datos de TODOS los jugadores." : "¿Seguro que deseas restaurar el taller a sus valores iniciales? Se borrarán los datos locales actuales.")) return;
             localStorage.removeItem(StorageService.KEY);
             location.reload();
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             initNavigation();
+            bindRoomControls();
+            if (cloudDb) {
+                try {
+                    await firebase.auth().signInAnonymously();
+                    authUser = firebase.auth().currentUser;
+                    showRoomStatus("Conectado. Crea un taller o introduce un código.");
+                } catch (authError) {
+                    console.error("Error de autenticación:", authError);
+                    showRoomStatus("No se pudo iniciar sesión. Revisa Authentication.", true);
+                }
+            } else {
+                showRoomStatus("Firebase no pudo inicializarse. Revisa la configuración.", true);
+            }
             document.getElementById('current-day-display').innerText = db.currentDay;
             document.getElementById('btn-pass-day').addEventListener('click', passDay);
             document.getElementById('btn-export').addEventListener('click', exportData);
@@ -1528,7 +1767,10 @@ Resultado: ${evalResult.statusText}`);
             document.getElementById('btn-cancel-ing').addEventListener('click', resetIngredientForm);
             document.getElementById('search-ing').addEventListener('input', renderIngredients);
 
-            document.getElementById('base-form').addEventListener('submit', saveCustomBase);
+            document.getElementById('base-form').addEventListener('submit', (e) => {
+                if (activeRoomRole === 'player') { e.preventDefault(); alert("Solo el Director puede modificar las bases."); return; }
+                saveCustomBase(e);
+            });
 
             document.getElementById('btn-add-inv').addEventListener('click', addToInventory);
             document.getElementById('inv-type-select').addEventListener('change', function() {
@@ -1557,7 +1799,10 @@ Resultado: ${evalResult.statusText}`);
                 renderHistoryTable();
             });
 
-            document.getElementById('potion-form').addEventListener('submit', savePotion);
+            document.getElementById('potion-form').addEventListener('submit', (e) => {
+                if (activeRoomRole === 'player') { e.preventDefault(); alert("Solo el Director puede modificar las recetas."); return; }
+                savePotion(e);
+            });
             document.getElementById('btn-cancel-pot').addEventListener('click', resetPotionForm);
 
             refreshAllUI();
