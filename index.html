@@ -1754,8 +1754,12 @@ Resultado: ${evalResult.statusText}`);
             bindRoomControls();
             if (cloudDb) {
                 try {
-                    await firebase.auth().signInAnonymously();
-                    authUser = firebase.auth().currentUser;
+                    const auth = firebase.auth();
+                    authUser = auth.currentUser;
+                    if (!authUser) {
+                        const credential = await auth.signInAnonymously();
+                        authUser = credential.user;
+                    }
                     showRoomStatus("Conectado. Crea un taller o introduce un código.");
                 } catch (authError) {
                     console.error("Error de autenticación:", authError);
