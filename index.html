@@ -1,129 +1,1567 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#171914">
-  <title>The Hollow Cauldron | Mesa alquímica</title>
-  <style>
-    :root{color-scheme:dark;--bg:#171914;--panel:#22251e;--panel2:#2b2e25;--line:#494b3d;--gold:#c7a66a;--paper:#e7dcc1;--muted:#aaa58f;--green:#7c956b}
-    *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#3a3b2b 0,#1b1d17 55%,#131510 100%);color:var(--paper);font:15px/1.45 Georgia,serif;min-height:100vh}
-    button,input{font:inherit}button{cursor:pointer}
-    .shell{max-width:1200px;margin:auto;padding:28px 22px 48px}
-    header{display:flex;justify-content:space-between;align-items:center;gap:18px;border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:22px}
-    .eyebrow{color:var(--gold);font:11px/1.4 system-ui,sans-serif;letter-spacing:.2em;text-transform:uppercase}
-    h1{font-size:clamp(25px,4vw,38px);font-weight:normal;letter-spacing:.04em;margin:4px 0}
-    .subtitle{color:var(--muted);font:13px system-ui,sans-serif}
-    .status{border:1px solid var(--line);border-radius:999px;padding:7px 12px;color:var(--muted);font:11px system-ui,sans-serif;white-space:nowrap}
-    .notice{background:#302b1e;border:1px solid #665638;color:#ddc99e;border-radius:8px;padding:12px 15px;margin:0 0 20px;font:13px/1.5 system-ui,sans-serif}
-    .layout{display:grid;grid-template-columns:minmax(250px, .85fr) minmax(0,1.6fr);gap:18px}
-    .panel{background:linear-gradient(160deg,#292c23,#20221c);border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:0 12px 32px #0003}
-    .panel-head{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px}
-    h2{font-size:16px;font-weight:normal;letter-spacing:.06em;margin:0;color:#e4d4b1}
-    .panel-body{padding:16px}
-    .muted{color:var(--muted);font:12px/1.5 system-ui,sans-serif}
-    .add-form{display:grid;gap:9px;margin-bottom:16px}
-    input{width:100%;background:#171914;border:1px solid var(--line);border-radius:6px;padding:10px 11px;color:var(--paper);outline:none}
-    input:focus{border-color:var(--gold)}
-    .btn{border:1px solid #806c46;background:#51442e;color:#f1e4c7;border-radius:6px;padding:9px 12px;font:12px system-ui,sans-serif}
-    .btn:hover{background:#675538}.btn.ghost{background:transparent;border-color:var(--line);color:var(--muted)}
-    .ingredient-list{display:grid;gap:8px;min-height:100px}
-    .ingredient{display:flex;align-items:center;gap:10px;background:#34372c;border:1px solid #555744;border-radius:7px;padding:10px;cursor:grab;user-select:none}
-    .ingredient:active{cursor:grabbing}.ingredient .sigil{width:34px;height:34px;border:1px solid #87764f;border-radius:50%;display:grid;place-items:center;color:var(--gold);font-size:17px;flex:none}
-    .ingredient strong{display:block;font-size:14px;font-weight:normal}.ingredient small{display:block;color:var(--muted);font:11px system-ui,sans-serif}
-    .ingredient .remove{margin-left:auto;background:none;border:0;color:#a99d83;font-size:18px;padding:2px 5px}
-    .workbench{display:grid;gap:14px}
-    .dropzone{border:1px dashed #82734e;border-radius:9px;background:radial-gradient(ellipse at center,#343527,#22241d);padding:18px;min-height:225px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;transition:.15s}
-    .dropzone.over{background:#3b3a28;border-color:var(--gold);box-shadow:inset 0 0 0 2px #c7a66a33}
-    .cauldron{width:112px;height:82px;border:3px solid #8a7954;border-radius:12px 12px 42px 42px;background:linear-gradient(#59604b,#292d24);box-shadow:inset 0 -14px 20px #10120f,0 8px 18px #0007;display:grid;place-items:center;color:#d4bd83;font-size:30px;margin:4px auto 12px;position:relative}
-    .cauldron:before{content:"";position:absolute;width:130px;height:9px;border:3px solid #8a7954;border-bottom:0;border-radius:50% 50% 0 0;top:-8px}
-    .cauldron-items{display:flex;flex-wrap:wrap;justify-content:center;gap:7px;margin-top:12px}
-    .placed{background:#4a4935;border:1px solid #8a7954;border-radius:5px;padding:5px 8px;font:11px system-ui,sans-serif}
-    .empty{color:var(--muted);font:12px system-ui,sans-serif}
-    .tools{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
-    .tool{background:#2b2e25;border:1px solid var(--line);border-radius:7px;padding:13px 8px;text-align:center;color:#d7c9a8}
-    .tool span{display:block;font-size:23px;margin-bottom:5px}.tool small{font:11px system-ui,sans-serif;color:var(--muted)}
-    .actions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap}
-    footer{text-align:center;color:#777966;font:11px system-ui,sans-serif;margin-top:22px}
-    @media(max-width:760px){.layout{grid-template-columns:1fr}.shell{padding:18px 13px 35px}header{align-items:flex-start}.status{font-size:10px}.tools{grid-template-columns:repeat(3,1fr)}}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nyvra Horizons — The Hollow Cauldron (Edición Definitiva v5)</title>
+    <style>
+        :root {
+            --bg-dark: #12100e;
+            --bg-panel: #1b1714;
+            --bg-card: #241f1a;
+            --border-iron: #3d352e;
+            --border-gold: #c29b38;
+            --text-main: #e6dfd5;
+            --text-muted: #a39688;
+            --accent-gold: #e0b84c;
+            --accent-red: #8b2f2f;
+            --accent-green: #388b43;
+            --accent-blue: #38718b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Georgia', serif; }
+        body { background-color: var(--bg-dark); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; }
+
+        header {
+            background: linear-gradient(to bottom, #1f1915, #0d0a08);
+            border-bottom: 2px solid var(--border-gold);
+            padding: 1.2rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        header h1 { font-size: 1.5rem; color: var(--accent-gold); letter-spacing: 2px; text-transform: uppercase; }
+        header p { font-size: 0.8rem; color: var(--text-muted); }
+
+        .header-controls { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+
+        .time-control {
+            background: #2c241d;
+            border: 1px solid var(--border-gold);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .multiplayer-badge {
+            background: rgba(56, 139, 67, 0.2);
+            border: 1px solid var(--accent-green);
+            color: #56e073;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .multiplayer-badge.offline {
+            background: rgba(139, 47, 47, 0.2);
+            border-color: var(--accent-red);
+            color: #e05638;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background-color: var(--bg-panel);
+            border-bottom: 1px solid var(--border-iron);
+            padding: 0 1rem;
+            gap: 0.3rem;
+            overflow-x: auto;
+        }
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 0.8rem 1.1rem;
+            cursor: pointer;
+            font-size: 0.85rem;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        .tab-btn:hover { color: var(--text-main); background: rgba(255,255,255,0.03); }
+        .tab-btn.active { color: var(--accent-gold); border-bottom-color: var(--accent-gold); background: var(--bg-card); font-weight: bold; }
+
+        main { flex: 1; padding: 1.5rem; max-width: 1400px; width: 100%; margin: 0 auto; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .panel {
+            background-color: var(--bg-panel);
+            border: 1px solid var(--border-iron);
+            border-radius: 4px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
+        }
+        .panel h2 {
+            color: var(--accent-gold);
+            font-size: 1.15rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border-iron);
+            padding-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
+
+        @media (max-width: 900px) {
+            .grid-2 { grid-template-columns: 1fr; }
+        }
+
+        label { display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.3rem; }
+        input, select, textarea {
+            width: 100%; background: var(--bg-dark); border: 1px solid var(--border-iron);
+            color: var(--text-main); padding: 0.5rem; border-radius: 3px; margin-bottom: 0.8rem; font-size: 0.9rem;
+        }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent-gold); }
+
+        button.btn {
+            background: #2c241d; border: 1px solid var(--border-gold); color: var(--accent-gold);
+            padding: 0.5rem 1rem; cursor: pointer; border-radius: 3px; font-weight: bold; text-transform: uppercase; font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+        button.btn:hover { background: var(--accent-gold); color: var(--bg-dark); }
+        button.btn-danger { border-color: var(--accent-red); color: #e05638; }
+        button.btn-danger:hover { background: var(--accent-red); color: white; }
+        button.btn-success { border-color: var(--accent-green); color: #56e073; }
+        button.btn-success:hover { background: var(--accent-green); color: black; }
+        button.btn-blue { border-color: var(--accent-blue); color: #56b2e0; }
+        button.btn-blue:hover { background: var(--accent-blue); color: white; }
+
+        .card { background: var(--bg-card); border: 1px solid var(--border-iron); border-radius: 4px; padding: 1rem; position: relative; }
+        .card-title { font-weight: bold; font-size: 1rem; color: var(--accent-gold); margin-bottom: 0.4rem; }
+        .badge { display: inline-block; font-size: 0.72rem; padding: 0.2rem 0.45rem; border-radius: 2px; background: var(--border-iron); color: var(--text-main); margin-right: 0.3rem; margin-bottom: 0.3rem; }
+        .badge-processed { background: #4a3b2c; border: 1px dashed var(--accent-gold); color: var(--accent-gold); }
+
+        .upa-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.3rem; margin: 0.5rem 0; font-size: 0.75rem; }
+        .upa-tag { background: rgba(0,0,0,0.35); padding: 0.3rem; text-align: center; border-radius: 2px; border: 1px solid var(--border-iron); }
+
+        .checkbox-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.4rem; margin-bottom: 0.8rem; font-size: 0.85rem; }
+        .checkbox-grid label { display: flex; align-items: center; gap: 0.4rem; color: var(--text-main); cursor: pointer; margin-bottom: 0; }
+        .checkbox-grid input { width: auto; margin-bottom: 0; cursor: pointer; }
+
+        .actions-bar { display: flex; gap: 0.5rem; margin-top: 0.8rem; }
+        .filter-bar { display: flex; gap: 0.8rem; margin-bottom: 1rem; flex-wrap: wrap; }
+        .filter-bar input, .filter-bar select { margin-bottom: 0; flex: 1; min-width: 160px; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.85rem; }
+        th, td { border: 1px solid var(--border-iron); padding: 0.6rem; text-align: left; }
+        th { background: var(--bg-card); color: var(--accent-gold); }
+        tr:nth-child(even) { background: rgba(255,255,255,0.015); }
+
+        .trajectory-box {
+            background: var(--bg-dark);
+            border: 1px solid var(--border-iron);
+            padding: 0.6rem;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: var(--accent-gold);
+            margin-top: 0.4rem;
+        }
+        .status-toast {
+            position: fixed; bottom: 1rem; right: 1rem;
+            background: #1f1915; border: 1px solid var(--accent-gold);
+            color: var(--text-main); padding: 0.6rem 1rem; border-radius: 4px;
+            font-size: 0.8rem; box-shadow: 0 4px 12px rgba(0,0,0,0.8);
+            opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 999;
+        }
+        .status-toast.show { opacity: 1; }
+    </style>
 </head>
 <body>
-  <main class="shell">
+
     <header>
-      <div><div class="eyebrow">Nyvra Horizons · Herramienta de campaña</div><h1>The Hollow Cauldron</h1><div class="subtitle">Mesa de trabajo alquímica</div></div>
-      <div class="status">PROTOTIPO · LOCAL</div>
+        <div>
+            <h1>Nyvra Horizons</h1>
+            <p>The Hollow Cauldron — Sistema de Alquimia Avanzado (v5)</p>
+        </div>
+        <div class="header-controls">
+            <div class="multiplayer-badge" id="mp-status-badge">
+                <span style="width:8px; height:8px; background:#56e073; border-radius:50%; display:inline-block;" id="mp-dot"></span>
+                <span id="mp-status-text">Multijugador Activo (Tab-Sync)</span>
+            </div>
+            <div class="time-control">
+                <div>
+                    <small style="color:var(--text-muted)">Calendario Interno</small>
+                    <div style="font-size: 1.1rem; font-weight: bold; color: var(--accent-gold);">Día <span id="current-day-display">1</span></div>
+                </div>
+                <button type="button" class="btn btn-success" id="btn-pass-day">Pasar Día</button>
+            </div>
+        </div>
+        <div style="display:flex; gap:0.4rem; flex-wrap:wrap; margin-top:0.5rem;">
+            <button type="button" class="btn" id="btn-export">Exportar JSON</button>
+            <button type="button" class="btn" id="btn-import">Importar JSON</button>
+            <button type="button" class="btn btn-danger" id="btn-reset-all" title="Restaurar estado inicial">Reiniciar Taller</button>
+        </div>
     </header>
-    <div class="notice"><strong>Versión de prueba:</strong> esta mesa funciona en tu navegador, pero todavía no sincroniza jugadores ni guarda inventarios. Estamos construyendo primero la interfaz; el multijugador llegará en una fase posterior.</div>
-    <section class="layout">
-      <article class="panel">
-        <div class="panel-head"><h2>Ingredientes disponibles</h2><span class="muted" id="count">0 fichas</span></div>
-        <div class="panel-body">
-          <form class="add-form" id="addForm">
-            <label class="muted" for="ingredientName">Crear ficha de ingrediente de prueba</label>
-            <input id="ingredientName" maxlength="40" placeholder="Nombre del ingrediente" required>
-            <input id="ingredientAffinity" maxlength="30" placeholder="Afinidad o nota (opcional)">
-            <button class="btn" type="submit">＋ Añadir ficha</button>
-          </form>
-          <p class="muted">Arrastra una ficha hasta el caldero para colocarla en la preparación. Estas fichas son temporales y no representan ingredientes oficiales.</p>
-          <div class="ingredient-list" id="ingredientList"><div class="empty">Todavía no hay ingredientes. Crea una ficha de prueba arriba.</div></div>
+
+    <nav class="nav-tabs" id="main-nav">
+        <button type="button" class="tab-btn active" data-tab="ingredients">Fichas de Ingredientes</button>
+        <button type="button" class="tab-btn" data-tab="inventory">Inventario General</button>
+        <button type="button" class="tab-btn" data-tab="processing">Mesa de Procesamiento</button>
+        <button type="button" class="tab-btn" data-tab="cauldron">Caldero &amp; Elaboración</button>
+        <button type="button" class="tab-btn" data-tab="history">Historial &amp; Bitácora</button>
+        <button type="button" class="tab-btn" data-tab="bases">Bases Alquímicas</button>
+        <button type="button" class="tab-btn" data-tab="potions">Biblioteca de Pociones</button>
+    </nav>
+
+    <main>
+        <!-- SECCIÓN 1: INGREDIENTES -->
+        <div id="ingredients" class="tab-content active">
+            <div class="grid-2">
+                <div class="panel">
+                    <h2>Registrar / Editar Ingrediente</h2>
+                    <form id="ingredient-form">
+                        <input type="hidden" id="ing-id">
+                        <label>Nombre del Ingrediente</label>
+                        <input type="text" id="ing-name" required placeholder="Ej. Raíz de Umbría">
+                        <label>Origen o Procedencia</label>
+                        <input type="text" id="ing-origin" placeholder="Ej. Pantanos de Nyvra">
+                        <div class="grid-2">
+                            <div>
+                                <label>Afinidad Principal</label>
+                                <select id="ing-affinity-1">
+                                    <option value="Pyro">Pyro (0; +)</option>
+                                    <option value="Hidro">Hidro (0; -)</option>
+                                    <option value="Aero">Aero (+; 0)</option>
+                                    <option value="Geo">Geo (-; 0)</option>
+                                    <option value="Lux">Lux (+; +)</option>
+                                    <option value="Abysso">Abysso (-; -)</option>
+                                    <option value="Vita">Vita (-; +)</option>
+                                    <option value="Venom">Venom (+; -)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>Afinidad Secundaria</label>
+                                <select id="ing-affinity-2">
+                                    <option value="Ninguna">Ninguna</option>
+                                    <option value="Pyro">Pyro</option><option value="Hidro">Hidro</option><option value="Aero">Aero</option><option value="Geo">Geo</option>
+                                    <option value="Lux">Lux</option><option value="Abysso">Abysso</option><option value="Vita">Vita</option><option value="Venom">Venom</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="grid-2">
+                            <div><label>Vector X</label><input type="number" id="ing-vx" value="0" step="1" required></div>
+                            <div><label>Vector Y</label><input type="number" id="ing-vy" value="0" step="1" required></div>
+                        </div>
+
+                        <label>Bases Alquímicas Compatibles</label>
+                        <div class="checkbox-grid" id="ing-bases-compatibility"></div>
+
+                        <label>Unidades de Principio Activo (UPA por Elemento)</label>
+                        <div class="upa-grid">
+                            <div class="upa-tag"><label>Pyro</label><input type="number" id="upa-pyro" value="0" min="0"></div>
+                            <div class="upa-tag"><label>Hidro</label><input type="number" id="upa-hidro" value="0" min="0"></div>
+                            <div class="upa-tag"><label>Aero</label><input type="number" id="upa-aero" value="0" min="0"></div>
+                            <div class="upa-tag"><label>Geo</label><input type="number" id="upa-geo" value="0" min="0"></div>
+                            <div class="upa-tag"><label>Lux</label><input type="number" id="upa-lux" value="0" min="0"></div>
+                            <div class="upa-tag"><label>Abysso</label><input type="number" id="upa-abysso" value="0" min="0"></div>
+                            <div class="upa-tag"><label>Vita</label><input type="number" id="upa-vita" value="0" min="0"></div>
+                            <div class="upa-tag"><label>Venom</label><input type="number" id="upa-venom" value="0" min="0"></div>
+                        </div>
+                        <label>Descripción / Notas Alquímicas</label>
+                        <textarea id="ing-desc" rows="2" placeholder="Notas sobre comportamiento..."></textarea>
+                        <button type="submit" class="btn">Guardar en Base de Datos</button>
+                        <button type="button" class="btn btn-danger" id="btn-cancel-ing" style="margin-left: 0.5rem;">Limpiar</button>
+                    </form>
+                </div>
+                <div class="panel">
+                    <h2>Catálogo Maestro de Ingredientes</h2>
+                    <div class="filter-bar"><input type="text" id="search-ing" placeholder="Filtrar por nombre u origen..."></div>
+                    <div id="ingredients-list" style="max-height: 550px; overflow-y: auto;"></div>
+                </div>
+            </div>
         </div>
-      </article>
-      <article class="panel">
-        <div class="panel-head"><h2>Zona de elaboración</h2><span class="muted">Preparación actual</span></div>
-        <div class="panel-body workbench">
-          <div class="dropzone" id="dropzone">
-            <div class="cauldron">⚗</div>
-            <strong>Caldero</strong>
-            <div class="muted">Arrastra aquí los ingredientes que quieras utilizar</div>
-            <div class="cauldron-items" id="cauldronItems"><span class="empty">El caldero está vacío</span></div>
-          </div>
-          <div><div class="eyebrow" style="margin-bottom:9px">Herramientas del taller</div><div class="tools">
-            <div class="tool"><span>⚗</span>Caldero<small>Elaboración</small></div>
-            <div class="tool"><span>◉</span>Mortero<small>Procesamiento</small></div>
-            <div class="tool"><span>▤</span>Prensa<small>Extracción</small></div>
-          </div></div>
-          <div class="actions"><button class="btn ghost" id="clearCauldron" type="button">Vaciar caldero</button><button class="btn" id="reset" type="button">Reiniciar prueba</button></div>
+
+        <!-- SECCIÓN 2: INVENTARIO -->
+        <div id="inventory" class="tab-content">
+            <div class="panel">
+                <h2>Almacén del Taller</h2>
+                <div class="filter-bar">
+                    <select id="inv-add-select"></select>
+                    <input type="number" id="inv-add-qty" value="1" min="1" style="max-width: 100px;">
+                    <select id="inv-type-select">
+                        <option value="normal">Normal / Base</option>
+                        <option value="procesado">Variante Procesada</option>
+                    </select>
+                    <input type="text" id="inv-process-tag" placeholder="Proceso (Ej. Molida)..." style="display:none;">
+                    <button type="button" class="btn" id="btn-add-inv">Añadir</button>
+                </div>
+                <div class="filter-bar">
+                    <input type="text" id="filter-inv-name" placeholder="Buscar en almacén...">
+                    <select id="filter-inv-state">
+                        <option value="all">Todos los estados</option>
+                        <option value="normal">Solo Normal / Base</option>
+                        <option value="procesado">Solo Procesados</option>
+                    </select>
+                </div>
+                <table>
+                    <thead>
+                        <tr><th>Ingrediente</th><th>Estado / Variante</th><th>Vector (X, Y)</th><th>UPA Activos</th><th>Stock</th><th>Acciones</th></tr>
+                    </thead>
+                    <tbody id="inventory-table-body"></tbody>
+                </table>
+            </div>
         </div>
-      </article>
-    </section>
-    <footer>THE HOLLOW CAULDRON · Prototipo de interfaz · No contiene todavía las reglas ni las fórmulas de Nyvra</footer>
-  </main>
-  <script>
-    const $ = s => document.querySelector(s);
-    let ingredients = [];
-    let placed = [];
-    let nextId = 1;
-    function render(){
-      $('#count').textContent = ingredients.length + (ingredients.length===1?' ficha':' fichas');
-      const list=$('#ingredientList'); list.innerHTML='';
-      if(!ingredients.length) list.innerHTML='<div class="empty">Todavía no hay ingredientes. Crea una ficha de prueba arriba.</div>';
-      ingredients.forEach(item=>{
-        const card=document.createElement('div'); card.className='ingredient'; card.draggable=true; card.dataset.id=item.id;
-        card.innerHTML='<div class="sigil">✧</div><div><strong></strong><small></small></div><button class="remove" title="Eliminar ficha" aria-label="Eliminar ficha">×</button>';
-        card.querySelector('strong').textContent=item.name;
-        card.querySelector('small').textContent=item.affinity||'Sin nota adicional';
-        card.addEventListener('dragstart',e=>{e.dataTransfer.setData('text/plain',String(item.id));e.dataTransfer.effectAllowed='copy'});
-        card.querySelector('.remove').addEventListener('click',()=>{ingredients=ingredients.filter(x=>x.id!==item.id);placed=placed.filter(x=>x!==item.id);render()});
-        list.appendChild(card);
-      });
-      const target=$('#cauldronItems');target.innerHTML='';
-      const selected=placed.map(id=>ingredients.find(x=>x.id===id)).filter(Boolean);
-      if(!selected.length) target.innerHTML='<span class="empty">El caldero está vacío</span>';
-      selected.forEach(item=>{const tag=document.createElement('span');tag.className='placed';tag.textContent=item.name;target.appendChild(tag)});
-    }
-    $('#addForm').addEventListener('submit',e=>{
-      e.preventDefault();const name=$('#ingredientName').value.trim();if(!name)return;
-      ingredients.push({id:nextId++,name,affinity:$('#ingredientAffinity').value.trim()});
-      $('#ingredientName').value='';$('#ingredientAffinity').value='';render();
-    });
-    const zone=$('#dropzone');
-    zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('over')});
-    zone.addEventListener('dragleave',()=>zone.classList.remove('over'));
-    zone.addEventListener('drop',e=>{e.preventDefault();zone.classList.remove('over');const id=Number(e.dataTransfer.getData('text/plain'));if(ingredients.some(x=>x.id===id)&&!placed.includes(id)){placed.push(id);render()}});
-    $('#clearCauldron').addEventListener('click',()=>{placed=[];render()});
-    $('#reset').addEventListener('click',()=>{ingredients=[];placed=[];nextId=1;render()});
-    render();
-  </script>
+
+        <!-- SECCIÓN 3: PROCESAMIENTO -->
+        <div id="processing" class="tab-content">
+            <div class="grid-2">
+                <div class="panel">
+                    <h2>Mesa de Procesamiento (Tabla de Transformaciones)</h2>
+                    <form id="process-form">
+                        <label>Seleccionar Ingrediente del Inventario</label>
+                        <select id="proc-inv-select" required></select>
+                        <label>Método de Procesamiento (Automático)</label>
+                        <select id="proc-method-select" required>
+                            <option value="Molido" data-days="0" data-dx="-1" data-dy="0" data-dupa="1">Molido (Mortero) [ΔX: -1, ΔY: 0, ΔUPA: +1] (0 Días)</option>
+                            <option value="Triturado" data-days="0" data-dx="0" data-dy="-1" data-dupa="1">Triturado (Prensa) [ΔX: 0, ΔY: -1, ΔUPA: +1] (0 Días)</option>
+                            <option value="Pulverizado" data-days="0" data-dx="-2" data-dy="-1" data-dupa="2">Pulverizado (Molino) [ΔX: -2, ΔY: -1, ΔUPA: +2] (0 Días)</option>
+                            <option value="Prensado" data-days="0" data-dx="1" data-dy="0" data-dupa="1">Prensado manual [ΔX: +1, ΔY: 0, ΔUPA: +1] (0 Días)</option>
+                            <option value="Filtrado" data-days="0" data-dx="0" data-dy="1" data-dupa="0">Filtrado (Gasa) [ΔX: 0, ΔY: +1, ΔUPA: 0] (0 Días)</option>
+                            <option value="Hervido" data-days="0" data-dx="1" data-dy="1" data-dupa="2">Hervido (Caldero) [ΔX: +1, ΔY: +1, ΔUPA: +2] (0 Días)</option>
+                            <option value="Tostado" data-days="1" data-dx="2" data-dy="0" data-dupa="2">Tostado (Bandeja) [ΔX: +2, ΔY: 0, ΔUPA: +2] (1 Día)</option>
+                            <option value="Quemado" data-days="0" data-dx="3" data-dy="-2" data-dupa="3">Quemado (Horno) [ΔX: +3, ΔY: -2, ΔUPA: +3] (0 Días)</option>
+                            <option value="Destilado" data-days="1" data-dx="0" data-dy="2" data-dupa="3">Destilado (Alambique) [ΔX: 0, ΔY: +2, ΔUPA: +3] (1 Día)</option>
+                            <option value="Secado" data-days="2" data-dx="-1" data-dy="2" data-dupa="1">Secado (Secadero) [ΔX: -1, ΔY: +2, ΔUPA: +1] (2 Días)</option>
+                            <option value="Liofilizado" data-days="3" data-dx="-2" data-dy="-2" data-dupa="4">Liofilizado rúnico [ΔX: -2, ΔY: -2, ΔUPA: +4] (3 Días)</option>
+                            <option value="Fermentado" data-days="4" data-dx="2" data-dy="2" data-dupa="3">Fermentado [ΔX: +2, ΔY: +2, ΔUPA: +3] (4 Días)</option>
+                            <option value="Curado" data-days="5" data-dx="1" data-dy="3" data-dupa="4">Curado [ΔX: +1, ΔY: +3, ΔUPA: +4] (5 Días)</option>
+                            <option value="Cristalizado" data-days="3" data-dx="-3" data-dy="1" data-dupa="4">Cristalizado Geo [ΔX: -3, ΔY: +1, ΔUPA: +4] (3 Días)</option>
+                            <option value="Mineralizado" data-days="4" data-dx="3" data-dy="1" data-dupa="4">Mineralizado rúnico [ΔX: +3, ΔY: +1, ΔUPA: +4] (4 Días)</option>
+                        </select>
+                        
+                        <div class="grid-2">
+                            <div><label>Modificador Vector X (ΔX)</label><input type="number" id="proc-mod-vx" value="-1" step="1" required></div>
+                            <div><label>Modificador Vector Y (ΔY)</label><input type="number" id="proc-mod-vy" value="0" step="1" required></div>
+                        </div>
+                        <label>Modificador UPA en Afinidad Principal (ΔUPA)</label>
+                        <input type="number" id="proc-mod-upa" value="1" step="1">
+                        <label>Duración Total (Días)</label>
+                        <input type="number" id="proc-duration" value="0" min="0" required>
+                        <div id="proc-preview" class="card" style="margin-bottom: 1rem; font-size: 0.85rem; color: var(--text-muted);">
+                            Selecciona un ingrediente para ver el vector resultante.
+                        </div>
+                        <button type="submit" class="btn">Iniciar Procesamiento</button>
+                    </form>
+                </div>
+                <div class="panel">
+                    <h2>Trabajos Pendientes en Taller</h2>
+                    <table>
+                        <thead>
+                            <tr><th>Ingrediente</th><th>Proceso</th><th>Inicio</th><th>Restante</th><th>Estado</th></tr>
+                        </thead>
+                        <tbody id="processing-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN 4: CALDERO -->
+        <div id="cauldron" class="tab-content">
+            <div class="grid-2">
+                <div class="panel">
+                    <h2>Mesa Alquímica y Caldero</h2>
+                    <label>1. Seleccionar Base Alquímica</label>
+                    <select id="cauldron-base-select"></select>
+
+                    <label>2. Seleccionar Receta Objetivo (Biblioteca)</label>
+                    <select id="cauldron-recipe-select">
+                        <option value="">-- Elaboración Libre / Experimentación --</option>
+                    </select>
+
+                    <label>3. Incorporar Ingredientes (Valida compatibilidad con base)</label>
+                    <div class="filter-bar">
+                        <select id="cauldron-ing-select"></select>
+                        <button type="button" class="btn" id="btn-cauldron-add">Añadir al Caldero</button>
+                    </div>
+
+                    <label>Secuencia en el Caldero (Inicio P₀ = 0; 0)</label>
+                    <div id="cauldron-ingredients-list" style="min-height: 90px; max-height: 200px; overflow-y: auto; background: var(--bg-dark); padding: 0.6rem; border: 1px solid var(--border-iron); margin-bottom: 1rem;">
+                        <small style="color:var(--text-muted)">El caldero está vacío.</small>
+                    </div>
+
+                    <div class="grid-2">
+                        <button type="button" class="btn btn-danger" id="btn-cauldron-clear">Vaciar Caldero</button>
+                        <button type="button" class="btn btn-success" id="btn-cauldron-brew">Confirmar Elaboración</button>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h2>Análisis Vectorial &amp; Validación Rigurosa</h2>
+                    <div class="card" style="margin-bottom: 0.8rem;">
+                        <div class="card-title">Posición Final (Pf) y Desviación (D)</div>
+                        <p id="cauldron-pos-display" style="font-size:0.9rem;">Posición actual: (0; 0)</p>
+                        <div class="trajectory-box" id="cauldron-trajectory-display">Trayectoria T = {(0; 0)}</div>
+                    </div>
+                    <div class="card" style="margin-bottom: 0.8rem;">
+                        <div class="card-title">UPA Acumuladas</div>
+                        <div id="cauldron-upa-display" class="upa-grid"></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Validación de Receta, Base, Potencia y Afinidad Prohibida</div>
+                        <div id="cauldron-result-status" style="font-size:0.88rem; color:var(--text-muted);">Selecciona una base y añade ingredientes.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN 5: HISTORIAL Y BITÁCORA -->
+        <div id="history" class="tab-content">
+            <div class="panel">
+                <h2>
+                    <span>Bitácora de Elaboraciones y Registros del Taller</span>
+                    <button type="button" class="btn btn-danger" id="btn-clear-history" style="font-size:0.72rem; padding:0.3rem 0.6rem;">Limpiar Bitácora</button>
+                </h2>
+                <table>
+                    <thead>
+                        <tr><th>Día</th><th>Preparación / Receta</th><th>Base</th><th>Potencia</th><th>Posición Final</th><th>Desviación</th><th>Resultado</th></tr>
+                    </thead>
+                    <tbody id="history-table-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- SECCIÓN 6: BASES ALQUÍMICAS -->
+        <div id="bases" class="tab-content">
+            <div class="grid-2">
+                <div class="panel">
+                    <h2>Crear / Registrar Nueva Base Alquímica</h2>
+                    <form id="base-form">
+                        <input type="hidden" id="base-custom-id">
+                        <label>Nombre de la Base</label>
+                        <input type="text" id="base-name" required placeholder="Ej. Agua estelar de manantial">
+                        <label>Categoría</label>
+                        <select id="base-category">
+                            <option value="Común">Común</option>
+                            <option value="Especializada">Especializada</option>
+                            <option value="Excepcional">Excepcional</option>
+                            <option value="Arcana">Arcana</option>
+                        </select>
+                        <label>Descripción y Propiedades Alquímicas</label>
+                        <textarea id="base-desc" rows="3" placeholder="Describe las propiedades de extracción..."></textarea>
+                        <button type="submit" class="btn">Guardar Base Alquímica</button>
+                    </form>
+                </div>
+                <div class="panel">
+                    <h2>Bases Alquímicas Oficiales y Personalizadas</h2>
+                    <div class="grid-3" id="bases-grid" style="max-height: 520px; overflow-y: auto;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN 7: POCIONES -->
+        <div id="potions" class="tab-content">
+            <div class="grid-2">
+                <div class="panel">
+                    <h2>Registrar / Editar Receta de Poción (Multitier &amp; Prohibidas)</h2>
+                    <form id="potion-form">
+                        <input type="hidden" id="pot-id">
+                        <label>Nombre de la Poción</label>
+                        <input type="text" id="pot-name" required placeholder="Ej. Elixir de Visión Umbría">
+                        <label>Efecto Principal</label>
+                        <input type="text" id="pot-effect" required placeholder="Ej. Visión en oscuridad">
+                        
+                        <label>Tolerancia Geométrica (D máximo)</label>
+                        <input type="number" id="pot-tolerance" value="2.0" step="0.1" min="0" required>
+
+                        <label>Bases Compatibles y Coordenada Objetivo (Xo; Yo) por Base</label>
+                        <div id="potion-base-coords-container" style="background:var(--bg-dark); border:1px solid var(--border-iron); padding:0.6rem; border-radius:3px; margin-bottom:0.8rem; max-height:200px; overflow-y:auto;"></div>
+
+                        <label>Requisitos por Potencia (Multitier)</label>
+                        <div style="background:var(--bg-dark); border:1px solid var(--border-iron); padding:0.6rem; border-radius:3px; margin-bottom:0.8rem;">
+                            <div style="font-size:0.8rem; color:var(--accent-gold); margin-bottom:0.4rem; font-weight:bold;">Potencia I (Menor)</div>
+                            <div class="grid-2">
+                                <div><label>Afinidad Req.</label><select id="pot-tier1-aff"><option value="">Ninguna</option><option value="pyro">Pyro</option><option value="hidro">Hidro</option><option value="aero">Aero</option><option value="geo">Geo</option><option value="lux">Lux</option><option value="abysso">Abysso</option><option value="vita">Vita</option><option value="venom">Venom</option></select></div>
+                                <div><label>UPA Mín.</label><input type="number" id="pot-tier1-upa" value="3" min="0"></div>
+                            </div>
+                            <div style="font-size:0.8rem; color:var(--accent-gold); margin-bottom:0.4rem; font-weight:bold; margin-top:0.4rem;">Potencia II (Intermedia)</div>
+                            <div class="grid-2">
+                                <div><label>Afinidad Req.</label><select id="pot-tier2-aff"><option value="">Ninguna</option><option value="pyro">Pyro</option><option value="hidro">Hidro</option><option value="aero">Aero</option><option value="geo">Geo</option><option value="lux">Lux</option><option value="abysso">Abysso</option><option value="vita">Vita</option><option value="venom">Venom</option></select></div>
+                                <div><label>UPA Mín.</label><input type="number" id="pot-tier2-upa" value="6" min="0"></div>
+                            </div>
+                            <div style="font-size:0.8rem; color:var(--accent-gold); margin-bottom:0.4rem; font-weight:bold; margin-top:0.4rem;">Potencia III (Superior)</div>
+                            <div class="grid-2">
+                                <div><label>Afinidad Req.</label><select id="pot-tier3-aff"><option value="">Ninguna</option><option value="pyro">Pyro</option><option value="hidro">Hidro</option><option value="aero">Aero</option><option value="geo">Geo</option><option value="lux">Lux</option><option value="abysso">Abysso</option><option value="vita">Vita</option><option value="venom">Venom</option></select></div>
+                                <div><label>UPA Mín.</label><input type="number" id="pot-tier3-upa" value="10" min="0"></div>
+                            </div>
+                        </div>
+
+                        <label>Afinidades Prohibidas (Si superan el límite de UPA, la receta falla)</label>
+                        <div class="checkbox-grid" id="pot-forbidden-affs"></div>
+
+                        <label>Ingrediente Específico Requerido (con distinción Normal / Procesado)</label>
+                        <div class="grid-2">
+                            <select id="pot-req-ing"><option value="">Ninguno</option></select>
+                            <input type="number" id="pot-req-qty" value="1" min="1" placeholder="Cantidad">
+                        </div>
+                        <div style="margin-bottom:0.8rem;">
+                            <label>Tipo de Variante de Ingrediente Requerido</label>
+                            <select id="pot-req-type">
+                                <option value="any">Cualquiera (Normal o Procesado)</option>
+                                <option value="normal">Estrictamente Normal / Base</option>
+                                <option value="procesado">Estrictamente Procesado</option>
+                            </select>
+                        </div>
+
+                        <label>Notas Secundarias</label>
+                        <textarea id="pot-desc" rows="2" placeholder="Notas..."></textarea>
+                        <button type="submit" class="btn">Guardar Receta</button>
+                        <button type="button" class="btn btn-danger" id="btn-cancel-pot" style="margin-left: 0.5rem;">Limpiar</button>
+                    </form>
+                </div>
+                <div class="panel">
+                    <h2>Biblioteca de Recetas</h2>
+                    <div id="potions-list" style="max-height: 550px; overflow-y: auto;"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="status-toast" id="status-toast">Guardado en el grimorio</div>
+
+    <script>
+        /* SISTEMA MULTIJUGADOR VÍA BROADCASTCHANNEL (TAB-SYNC) Y STORAGE SERVICE */
+        const MULTIPLAYER_CHANNEL = 'nyvra_hollow_cauldron_sync_v5';
+        const bc = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel(MULTIPLAYER_CHANNEL) : null;
+
+        const StorageService = {
+            KEY: 'nyvra_alquimia_db_final_v5',
+            VERSION: '5.0.0',
+
+            getDefaultState() {
+                return {
+                    meta: {
+                        schemaVersion: this.VERSION,
+                        campaign: 'Nyvra Horizons',
+                        lastUpdated: new Date().toISOString()
+                    },
+                    currentDay: 1,
+                    bases: [
+                        { id: 1, name: "Agua", category: "Común", desc: "Facilita la disolución de sustancias hidrosolubles. Adecuada para extractos vegetales y minerales solubles.", custom: false },
+                        { id: 2, name: "Aceite", category: "Común", desc: "Extrae sustancias liposolubles. Adecuado para resinas, grasas y componentes vegetales oleosos.", custom: false },
+                        { id: 3, name: "Vino", category: "Común", desc: "Permite extraer determinados compuestos vegetales. Su contenido alcohólico modifica la extracción y conservación.", custom: false },
+                        { id: 4, name: "Lejía de ceniza", category: "Especializada", desc: "Medio alcalino obtenido de cenizas y agua. Incompatible con numerosos ingredientes delicados.", custom: false },
+                        { id: 5, name: "Sangre", category: "Especializada", desc: "Medio orgánico con componentes biológicos. Adecuada para preparaciones relacionadas con tejidos y procesos vitales.", custom: false },
+                        { id: 6, name: "Solución salina", category: "Especializada", desc: "Medio acuoso con minerales disueltos. Útil para extracción de sales y compuestos minerales.", custom: false },
+                        { id: 7, name: "Alcohol destilado", category: "Especializada", desc: "Facilita la extracción de determinados compuestos orgánicos y sustancias volátiles.", custom: false },
+                        { id: 8, name: "Mercurio alquímico", category: "Excepcional", desc: "Medio alquímico de naturaleza mineral y metálica. Extremadamente difícil de manipular y estabilizar.", custom: false }
+                    ],
+                    ingredients: [
+                        {
+                            id: "ing-1",
+                            name: "Raíz de Umbría",
+                            origin: "Pantanos de Nyvra",
+                            affinity1: "Abysso",
+                            affinity2: "Vita",
+                            vx: -2,
+                            vy: 1,
+                            compatibleBases: [1, 2, 6],
+                            upa: { pyro: 0, hidro: 1, aero: 0, geo: 0, lux: 0, abysso: 3, vita: 1, venom: 0 },
+                            desc: "Raíz oscura que absorbe la luz ambiental."
+                        },
+                        {
+                            id: "ing-2",
+                            name: "Flor de Fuego Estelar",
+                            origin: "Cumbres Volcánicas",
+                            affinity1: "Pyro",
+                            affinity2: "Lux",
+                            vx: 2,
+                            vy: 2,
+                            compatibleBases: [1, 2, 3, 7],
+                            upa: { pyro: 4, hidro: 0, aero: 1, geo: 0, lux: 2, abysso: 0, vita: 0, venom: 0 },
+                            desc: "Pétalos incandescentes de calor residual."
+                        }
+                    ],
+                    inventory: [
+                        {
+                            instanceId: "inv-1",
+                            ingredientId: "ing-1",
+                            type: "normal",
+                            processTag: "",
+                            vx: -2,
+                            vy: 1,
+                            compatibleBases: [1, 2, 6],
+                            upa: { pyro: 0, hidro: 1, aero: 0, geo: 0, lux: 0, abysso: 3, vita: 1, venom: 0 },
+                            qty: 5
+                        },
+                        {
+                            instanceId: "inv-2",
+                            ingredientId: "ing-2",
+                            type: "normal",
+                            processTag: "",
+                            vx: 2,
+                            vy: 2,
+                            compatibleBases: [1, 2, 3, 7],
+                            upa: { pyro: 4, hidro: 0, aero: 1, geo: 0, lux: 2, abysso: 0, vita: 0, venom: 0 },
+                            qty: 3
+                        }
+                    ],
+                    processingJobs: [],
+                    potions: [
+                        {
+                            id: "pot-1",
+                            name: "Elixir de Visión Nocturna",
+                            effect: "Concede visión en oscuridad total mediante resonancia Abysso.",
+                            tolerance: 1.5,
+                            baseCoords: {
+                                "1": { enabled: true, xo: -2, yo: 1 },
+                                "2": { enabled: true, xo: -1, yo: 2 }
+                            },
+                            tiers: [
+                                { aff: "abysso", upaMin: 3 },
+                                { aff: "abysso", upaMin: 6 },
+                                { aff: "abysso", upaMin: 10 }
+                            ],
+                            forbiddenAffs: ["pyro", "lux"],
+                            reqIngId: "ing-1",
+                            reqQty: 1,
+                            reqType: "any",
+                            desc: "Evitar exposición repentina a luz intensa."
+                        }
+                    ],
+                    brewHistory: []
+                };
+            },
+
+            load() {
+                const raw = localStorage.getItem(this.KEY);
+                if (!raw) return this.getDefaultState();
+                try {
+                    const parsed = JSON.parse(raw);
+                    const base = this.getDefaultState();
+                    return {
+                        ...base,
+                        ...parsed,
+                        meta: { ...base.meta, ...(parsed.meta || {}) },
+                        bases: Array.isArray(parsed.bases) && parsed.bases.length > 0 ? parsed.bases : base.bases,
+                        ingredients: Array.isArray(parsed.ingredients) ? parsed.ingredients : base.ingredients,
+                        inventory: Array.isArray(parsed.inventory) ? parsed.inventory : base.inventory,
+                        processingJobs: Array.isArray(parsed.processingJobs) ? parsed.processingJobs : [],
+                        potions: Array.isArray(parsed.potions) ? parsed.potions : base.potions,
+                        brewHistory: Array.isArray(parsed.brewHistory) ? parsed.brewHistory : []
+                    };
+                } catch (e) {
+                    console.error("Error restaurando estado:", e);
+                    return this.getDefaultState();
+                }
+            },
+
+            save(state, broadcast = true) {
+                state.meta.lastUpdated = new Date().toISOString();
+                localStorage.setItem(this.KEY, JSON.stringify(state));
+                showToast("Sincronizado en Red del Taller");
+                if (broadcast && bc) {
+                    bc.postMessage({ type: 'SYNC_STATE', payload: state });
+                }
+            }
+        };
+
+        let db = StorageService.load();
+        let cauldronState = { baseId: 1, recipeId: "", ingredients: [] };
+
+        if (bc) {
+            bc.onmessage = (event) => {
+                if (event.data && event.data.type === 'SYNC_STATE') {
+                    db = event.data.payload;
+                    refreshAllUI();
+                    showToast("¡Actualización multijugador recibida!");
+                }
+            };
+        }
+
+        function showToast(msg) {
+            const el = document.getElementById('status-toast');
+            if (!el) return;
+            el.innerText = msg;
+            el.classList.add('show');
+            clearTimeout(el._timer);
+            el._timer = setTimeout(() => el.classList.remove('show'), 1800);
+        }
+
+        function initNavigation() {
+            document.querySelectorAll('#main-nav .tab-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const targetTab = btn.getAttribute('data-tab');
+                    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+                    document.querySelectorAll('#main-nav .tab-btn').forEach(b => b.classList.remove('active'));
+                    document.getElementById(targetTab).classList.add('active');
+                    btn.classList.add('active');
+                    if (targetTab === 'cauldron') initCauldronUI();
+                    if (targetTab === 'potions' && !document.getElementById('pot-id').value) {
+                        renderPotionBaseInputs();
+                        renderForbiddenAffCheckboxes();
+                    }
+                    if (targetTab === 'bases') renderBases();
+                    if (targetTab === 'history') renderHistoryTable();
+                });
+            });
+        }
+
+        function refreshAllUI() {
+            document.getElementById('current-day-display').innerText = db.currentDay;
+            renderBases();
+            renderIngredientBaseCheckboxes();
+            renderPotionBaseInputs();
+            renderForbiddenAffCheckboxes();
+            renderIngredients();
+            renderInventorySelects();
+            renderInventoryTable();
+            renderProcessingTable();
+            renderHistoryTable();
+            renderPotions();
+            if(document.getElementById('cauldron').classList.contains('active')) {
+                initCauldronUI();
+            }
+        }
+
+        function passDay() {
+            db.currentDay++;
+            document.getElementById('current-day-display').innerText = db.currentDay;
+            const stillActive = [];
+            let completed = 0;
+
+            db.processingJobs.forEach(job => {
+                job.daysRemaining--;
+                if (job.daysRemaining <= 0) {
+                    completed++;
+                    addOrStackInventory({
+                        ingredientId: job.ingredientId,
+                        type: 'procesado',
+                        processTag: job.method,
+                        vx: job.targetVx,
+                        vy: job.targetVy,
+                        compatibleBases: job.compatibleBases,
+                        upa: job.targetUpa,
+                        qty: job.qty
+                    });
+                } else {
+                    stillActive.push(job);
+                }
+            });
+
+            db.processingJobs = stillActive;
+            StorageService.save(db);
+            renderInventoryTable();
+            renderInventorySelects();
+            renderProcessingTable();
+            alert(`Día ${db.currentDay} iniciado. Procesos completados: ${completed}.`);
+        }
+
+        function addOrStackInventory(newItem) {
+            const existing = db.inventory.find(i =>
+                i.ingredientId === newItem.ingredientId &&
+                i.type === newItem.type &&
+                i.processTag === newItem.processTag &&
+                i.vx === newItem.vx &&
+                i.vy === newItem.vy
+            );
+            if (existing) {
+                existing.qty += newItem.qty;
+            } else {
+                db.inventory.push({
+                    instanceId: 'inv-' + Date.now() + '-' + Math.random().toString(36).substring(2, 6),
+                    ...newItem
+                });
+            }
+        }
+
+        function getOfficialBasesList() {
+            return db.bases || [];
+        }
+
+        function renderBases() {
+            const list = getOfficialBasesList();
+            document.getElementById('bases-grid').innerHTML = list.map(b => `
+                <div class="card">
+                    <div class="card-title">${b.id}. ${b.name} ${b.custom ? '<span class="badge" style="background:var(--accent-blue);">Personalizada</span>' : ''}</div>
+                    <span class="badge" style="background:var(--border-gold); color:#000;">${b.category}</span>
+                    <p style="font-size:0.82rem; margin-top:0.5rem; color:var(--text-muted); line-height:1.4;">${b.desc}</p>
+                    ${b.custom ? `<div class="actions-bar"><button type="button" class="btn btn-danger" style="padding:0.2rem 0.5rem; font-size:0.7rem;" onclick="deleteCustomBase(${b.id})">Eliminar</button></div>` : ''}
+                </div>
+            `).join('');
+        }
+
+        window.deleteCustomBase = function(id) {
+            if(!confirm("¿Eliminar esta base alquímica personalizada?")) return;
+            db.bases = db.bases.filter(b => b.id !== id);
+            StorageService.save(db);
+            refreshAllUI();
+        };
+
+        function saveCustomBase(e) {
+            e.preventDefault();
+            const name = document.getElementById('base-name').value.trim();
+            const category = document.getElementById('base-category').value;
+            const desc = document.getElementById('base-desc').value.trim();
+            const maxId = db.bases.reduce((max, b) => Math.max(max, b.id), 0);
+            const newId = maxId + 1;
+
+            db.bases.push({ id: newId, name, category, desc, custom: true });
+            StorageService.save(db);
+            document.getElementById('base-form').reset();
+            refreshAllUI();
+            alert(`Base alquímica "${name}" registrada con éxito.`);
+        }
+
+        function renderIngredientBaseCheckboxes(selectedIds = [1, 2, 3, 4, 5, 6, 7, 8]) {
+            const container = document.getElementById('ing-bases-compatibility');
+            const bases = getOfficialBasesList();
+            container.innerHTML = bases.map(b => `
+                <label><input type="checkbox" name="ing-base-chk" value="${b.id}" ${selectedIds.includes(b.id) ? 'checked' : ''}> ${b.id}. ${b.name}</label>
+            `).join('');
+        }
+
+        function renderPotionBaseInputs(savedCoords = {}) {
+            const container = document.getElementById('potion-base-coords-container');
+            const bases = getOfficialBasesList();
+            container.innerHTML = bases.map(b => {
+                const entry = savedCoords[b.id];
+                const isEnabled = entry ? (entry.enabled !== false) : (Object.keys(savedCoords).length === 0 ? b.id === 1 : false);
+                const xo = entry ? entry.xo : 0;
+                const yo = entry ? entry.yo : 0;
+                return `
+                    <div style="margin-bottom:0.5rem; display:flex; align-items:center; justify-content:space-between; gap:0.5rem; font-size:0.85rem; padding-bottom:0.3rem; border-bottom:1px solid rgba(255,255,255,0.04);">
+                        <label style="display:flex; align-items:center; gap:0.4rem; margin:0; color:var(--text-main); cursor:pointer; min-width:150px;">
+                            <input type="checkbox" class="pot-base-enabled" data-baseid="${b.id}" ${isEnabled ? 'checked' : ''} style="width:auto; margin:0;">
+                            <strong>${b.id}. ${b.name}</strong>
+                        </label>
+                        <div style="display:flex; gap:0.4rem; align-items:center;">
+                            <label style="margin:0; font-size:0.75rem;">Xo:</label><input type="number" class="pot-base-xo" data-baseid="${b.id}" value="${xo}" style="width:65px; margin:0;" step="1">
+                            <label style="margin:0; font-size:0.75rem;">Yo:</label><input type="number" class="pot-base-yo" data-baseid="${b.id}" value="${yo}" style="width:65px; margin:0;" step="1">
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        const affinityKeys = ["pyro", "hidro", "aero", "geo", "lux", "abysso", "vita", "venom"];
+
+        function renderForbiddenAffCheckboxes(selectedAffs = []) {
+            const container = document.getElementById('pot-forbidden-affs');
+            container.innerHTML = affinityKeys.map(aff => `
+                <label><input type="checkbox" name="pot-forbidden-chk" value="${aff}" ${selectedAffs.includes(aff) ? 'checked' : ''}> ${aff.toUpperCase()}</label>
+            `).join('');
+        }
+
+        // Ingredientes
+        function saveIngredient(e) {
+            e.preventDefault();
+            const id = document.getElementById('ing-id').value || 'ing-' + Date.now();
+            const name = document.getElementById('ing-name').value.trim();
+            const origin = document.getElementById('ing-origin').value.trim();
+            const affinity1 = document.getElementById('ing-affinity-1').value;
+            const affinity2 = document.getElementById('ing-affinity-2').value;
+            const vx = parseInt(document.getElementById('ing-vx').value) || 0;
+            const vy = parseInt(document.getElementById('ing-vy').value) || 0;
+            const desc = document.getElementById('ing-desc').value.trim();
+
+            const compatibleBases = Array.from(document.querySelectorAll('input[name="ing-base-chk"]:checked')).map(el => parseInt(el.value));
+
+            const upa = {
+                pyro: parseInt(document.getElementById('upa-pyro').value) || 0,
+                hidro: parseInt(document.getElementById('upa-hidro').value) || 0,
+                aero: parseInt(document.getElementById('upa-aero').value) || 0,
+                geo: parseInt(document.getElementById('upa-geo').value) || 0,
+                lux: parseInt(document.getElementById('upa-lux').value) || 0,
+                abysso: parseInt(document.getElementById('upa-abysso').value) || 0,
+                vita: parseInt(document.getElementById('upa-vita').value) || 0,
+                venom: parseInt(document.getElementById('upa-venom').value) || 0
+            };
+
+            const idx = db.ingredients.findIndex(i => i.id === id);
+            const ingData = { id, name, origin, affinity1, affinity2, vx, vy, compatibleBases, upa, desc };
+            if (idx >= 0) db.ingredients[idx] = ingData;
+            else db.ingredients.push(ingData);
+
+            StorageService.save(db);
+            renderIngredients();
+            renderInventorySelects();
+            resetIngredientForm();
+        }
+
+        function resetIngredientForm() {
+            document.getElementById('ingredient-form').reset();
+            document.getElementById('ing-id').value = '';
+            const bases = getOfficialBasesList();
+            renderIngredientBaseCheckboxes(bases.map(b => b.id));
+        }
+
+        window.editIngredient = function(id) {
+            const i = db.ingredients.find(item => item.id === id);
+            if (!i) return;
+            document.getElementById('ing-id').value = i.id;
+            document.getElementById('ing-name').value = i.name;
+            document.getElementById('ing-origin').value = i.origin;
+            document.getElementById('ing-affinity-1').value = i.affinity1;
+            document.getElementById('ing-affinity-2').value = i.affinity2;
+            document.getElementById('ing-vx').value = i.vx;
+            document.getElementById('ing-vy').value = i.vy;
+            document.getElementById('ing-desc').value = i.desc;
+            const bases = getOfficialBasesList();
+            renderIngredientBaseCheckboxes(i.compatibleBases || bases.map(b => b.id));
+            Object.keys(i.upa).forEach(k => {
+                const el = document.getElementById(`upa-${k}`);
+                if (el) el.value = i.upa[k];
+            });
+        };
+
+        window.deleteIngredient = function(id) {
+            if (!confirm("¿Eliminar este ingrediente del catálogo maestro?")) return;
+            db.ingredients = db.ingredients.filter(i => i.id !== id);
+            StorageService.save(db);
+            renderIngredients();
+            renderInventorySelects();
+        };
+
+        function renderIngredients() {
+            const filter = document.getElementById('search-ing').value.toLowerCase();
+            const bases = getOfficialBasesList();
+            document.getElementById('ingredients-list').innerHTML = db.ingredients
+                .filter(i => i.name.toLowerCase().includes(filter) || (i.origin && i.origin.toLowerCase().includes(filter)))
+                .map(i => {
+                    const basesStr = (i.compatibleBases || []).map(bId => {
+                        const bObj = bases.find(b => b.id === bId);
+                        return bObj ? bObj.name : '';
+                    }).filter(Boolean).join(', ');
+                    return `
+                        <div class="card" style="margin-bottom:0.7rem;">
+                            <div class="card-title">${i.name}</div>
+                            <span class="badge">${i.affinity1}</span>
+                            ${i.affinity2 !== 'Ninguna' ? `<span class="badge">${i.affinity2}</span>` : ''}
+                            <span class="badge" style="background:#2c241d;">Vector: (${i.vx}; ${i.vy})</span>
+                            <p style="font-size:0.78rem; color:var(--text-muted); margin-top:0.3rem;">Bases aptas: ${basesStr || 'Ninguna'}</p>
+                            <div class="actions-bar">
+                                <button type="button" class="btn" style="padding:0.2rem 0.5rem; font-size:0.7rem;" onclick="editIngredient('${i.id}')">Editar</button>
+                                <button type="button" class="btn btn-danger" style="padding:0.2rem 0.5rem; font-size:0.7rem;" onclick="deleteIngredient('${i.id}')">Eliminar</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+        }
+
+        // Inventario
+        function renderInventorySelects() {
+            document.getElementById('inv-add-select').innerHTML = db.ingredients.map(i => `<option value="${i.id}">${i.name}</option>`).join('');
+            document.getElementById('proc-inv-select').innerHTML = db.inventory.map(item => {
+                const ing = db.ingredients.find(i => i.id === item.ingredientId);
+                if (!ing) return '';
+                const label = item.type === 'procesado' ? `${ing.name} [${item.processTag}]` : `${ing.name} (Normal)`;
+                return `<option value="${item.instanceId}">${label} [Stock: ${item.qty}]</option>`;
+            }).join('');
+            document.getElementById('pot-req-ing').innerHTML = `<option value="">Ninguno</option>` + db.ingredients.map(i => `<option value="${i.id}">${i.name}</option>`).join('');
+        }
+
+        function addToInventory() {
+            const ingId = document.getElementById('inv-add-select').value;
+            const ingObj = db.ingredients.find(i => i.id === ingId);
+            if (!ingObj) return;
+            const qty = parseInt(document.getElementById('inv-add-qty').value) || 1;
+            const type = document.getElementById('inv-type-select').value;
+            const processTag = type === 'procesado' ? (document.getElementById('inv-process-tag').value.trim() || 'Procesado') : '';
+            const bases = getOfficialBasesList();
+
+            addOrStackInventory({
+                ingredientId: ingId,
+                type,
+                processTag,
+                vx: ingObj.vx,
+                vy: ingObj.vy,
+                compatibleBases: ingObj.compatibleBases || bases.map(b => b.id),
+                upa: { ...ingObj.upa },
+                qty
+            });
+            StorageService.save(db);
+            renderInventoryTable();
+            renderInventorySelects();
+        }
+
+        window.updateInventoryQty = function(instanceId, delta) {
+            const item = db.inventory.find(i => i.instanceId === instanceId);
+            if (!item) return;
+            item.qty += delta;
+            if (item.qty <= 0) db.inventory = db.inventory.filter(i => i.instanceId !== instanceId);
+            StorageService.save(db);
+            renderInventoryTable();
+            renderInventorySelects();
+        };
+
+        function renderInventoryTable() {
+            const nameFilter = document.getElementById('filter-inv-name').value.toLowerCase();
+            const stateFilter = document.getElementById('filter-inv-state').value;
+            document.getElementById('inventory-table-body').innerHTML = db.inventory.map(item => {
+                const ing = db.ingredients.find(i => i.id === item.ingredientId);
+                if (!ing) return '';
+                if (nameFilter && !ing.name.toLowerCase().includes(nameFilter)) return '';
+                if (stateFilter !== 'all' && item.type !== stateFilter) return '';
+
+                const typeLabel = item.type === 'procesado'
+                    ? `<span class="badge badge-processed">${item.processTag}</span>`
+                    : `<span class="badge">Normal / Base</span>`;
+                const upaSum = Object.entries(item.upa).filter(([, v]) => v > 0).map(([k, v]) => `${k.toUpperCase()}: ${v}`).join(' | ');
+
+                return `
+                    <tr>
+                        <td><strong>${ing.name}</strong></td>
+                        <td>${typeLabel}</td>
+                        <td>(${item.vx}; ${item.vy})</td>
+                        <td><small>${upaSum || 'Ninguno'}</small></td>
+                        <td><strong>${item.qty}</strong></td>
+                        <td>
+                            <button type="button" class="btn" style="padding:0.2rem 0.45rem; font-size:0.72rem;" onclick="updateInventoryQty('${item.instanceId}', 1)">+</button>
+                            <button type="button" class="btn" style="padding:0.2rem 0.45rem; font-size:0.72rem;" onclick="updateInventoryQty('${item.instanceId}', -1)">-</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Procesamiento (Tabla de transformaciones)
+        function updateProcessDefaults() {
+            const select = document.getElementById('proc-method-select');
+            const opt = select.options[select.selectedIndex];
+            if (opt) {
+                document.getElementById('proc-duration').value = opt.getAttribute('data-days') || 0;
+                document.getElementById('proc-mod-vx').value = opt.getAttribute('data-dx') || 0;
+                document.getElementById('proc-mod-vy').value = opt.getAttribute('data-dy') || 0;
+                document.getElementById('proc-mod-upa').value = opt.getAttribute('data-dupa') || 0;
+            }
+            updateProcessPreview();
+        }
+
+        function updateProcessPreview() {
+            const instId = document.getElementById('proc-inv-select').value;
+            const item = db.inventory.find(i => i.instanceId === instId);
+            const previewEl = document.getElementById('proc-preview');
+            if (!item) {
+                previewEl.innerText = "No hay ingredientes disponibles en el almacén.";
+                return;
+            }
+            const modVx = parseInt(document.getElementById('proc-mod-vx').value) || 0;
+            const modVy = parseInt(document.getElementById('proc-mod-vy').value) || 0;
+            const modUpa = parseInt(document.getElementById('proc-mod-upa').value) || 0;
+            previewEl.innerHTML = `Vector actual: <strong>(${item.vx}; ${item.vy})</strong> &rarr; Vector resultante: <strong style="color:var(--accent-gold)">(${item.vx + modVx}; ${item.vy + modVy})</strong> | Modificador UPA Principal: <strong>+${modUpa}</strong>`;
+        }
+
+        function startProcessing(e) {
+            e.preventDefault();
+            const instId = document.getElementById('proc-inv-select').value;
+            const item = db.inventory.find(i => i.instanceId === instId);
+            if (!item || item.qty < 1) { alert("Stock insuficiente."); return; }
+
+            const ing = db.ingredients.find(i => i.id === item.ingredientId);
+            const method = document.getElementById('proc-method-select').value;
+            const modVx = parseInt(document.getElementById('proc-mod-vx').value) || 0;
+            const modVy = parseInt(document.getElementById('proc-mod-vy').value) || 0;
+            const modUpa = parseInt(document.getElementById('proc-mod-upa').value) || 0;
+            const duration = parseInt(document.getElementById('proc-duration').value) || 0;
+            const bases = getOfficialBasesList();
+
+            const newUpa = { ...item.upa };
+            if (ing && ing.affinity1) {
+                const key = ing.affinity1.toLowerCase();
+                if (newUpa[key] !== undefined) newUpa[key] = Math.max(0, newUpa[key] + modUpa);
+            }
+
+            item.qty--;
+            if (item.qty <= 0) db.inventory = db.inventory.filter(i => i.instanceId !== instId);
+
+            if (duration === 0) {
+                addOrStackInventory({
+                    ingredientId: item.ingredientId,
+                    type: 'procesado',
+                    processTag: method,
+                    vx: item.vx + modVx,
+                    vy: item.vy + modVy,
+                    compatibleBases: item.compatibleBases || bases.map(b => b.id),
+                    upa: newUpa,
+                    qty: 1
+                });
+                alert(`¡Procesado instantáneo (${method}) completado mediante la tabla de transformaciones!`);
+            } else {
+                db.processingJobs.push({
+                    jobId: 'job-' + Date.now(),
+                    ingredientId: item.ingredientId,
+                    method,
+                    startDay: db.currentDay,
+                    totalDays: duration,
+                    daysRemaining: duration,
+                    targetVx: item.vx + modVx,
+                    targetVy: item.vy + modVy,
+                    compatibleBases: item.compatibleBases || bases.map(b => b.id),
+                    targetUpa: newUpa,
+                    qty: 1
+                });
+                alert(`Trabajo iniciado en taller por ${duration} días.`);
+            }
+            StorageService.save(db);
+            renderInventoryTable();
+            renderInventorySelects();
+            renderProcessingTable();
+            updateProcessPreview();
+        }
+
+        function renderProcessingTable() {
+            document.getElementById('processing-table-body').innerHTML = db.processingJobs.length === 0
+                ? `<tr><td colspan="5" style="color:var(--text-muted); text-align:center;">Sin trabajos pendientes.</td></tr>`
+                : db.processingJobs.map(job => {
+                    const ing = db.ingredients.find(i => i.id === job.ingredientId);
+                    return `<tr><td>${ing ? ing.name : ''}</td><td><span class="badge badge-processed">${job.method}</span></td><td>Día ${job.startDay}</td><td><strong>${job.daysRemaining} / ${job.totalDays} días</strong></td><td><span class="badge">En curso</span></td></tr>`;
+                }).join('');
+        }
+
+        // Caldero
+        function initCauldronUI() {
+            const bases = getOfficialBasesList();
+            document.getElementById('cauldron-base-select').innerHTML = bases.map(b => `<option value="${b.id}">${b.id}. ${b.name} (${b.category})</option>`).join('');
+            document.getElementById('cauldron-recipe-select').innerHTML = `<option value="">-- Elaboración Libre --</option>` + db.potions.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+            document.getElementById('cauldron-ing-select').innerHTML = db.inventory.map(item => {
+                const ing = db.ingredients.find(i => i.id === item.ingredientId);
+                if (!ing) return '';
+                const tag = item.type === 'procesado' ? `[${item.processTag}]` : '(Normal)';
+                return `<option value="${item.instanceId}">${ing.name} ${tag} [Stock: ${item.qty}]</option>`;
+            }).join('');
+            updateCauldronState();
+        }
+
+        function addIngredientToCauldron() {
+            const instId = document.getElementById('cauldron-ing-select').value;
+            const item = db.inventory.find(i => i.instanceId === instId);
+            if (!item) return;
+
+            const alreadyIn = cauldronState.ingredients.filter(ci => ci.instanceId === instId).length;
+            if (alreadyIn >= item.qty) {
+                alert("No tienes más unidades disponibles de este ingrediente en tu almacén.");
+                return;
+            }
+
+            const selectedBaseId = parseInt(document.getElementById('cauldron-base-select').value);
+            const bases = getOfficialBasesList();
+            const compatibleList = item.compatibleBases || bases.map(b => b.id);
+
+            if (!compatibleList.includes(selectedBaseId)) {
+                const baseObj = bases.find(b => b.id === selectedBaseId);
+                alert(`¡Incompatibilidad alquímica! Este ingrediente no es compatible con ${baseObj ? baseObj.name : 'esta base'}.`);
+                return;
+            }
+
+            const ing = db.ingredients.find(i => i.id === item.ingredientId);
+            cauldronState.ingredients.push({
+                instanceId: item.instanceId,
+                ingredientId: item.ingredientId,
+                type: item.type,
+                name: ing.name + (item.type === 'procesado' ? ` [${item.processTag}]` : ''),
+                vx: item.vx,
+                vy: item.vy,
+                upa: { ...item.upa }
+            });
+            updateCauldronState();
+        }
+
+        window.removeIngredientFromCauldron = function(index) {
+            cauldronState.ingredients.splice(index, 1);
+            updateCauldronState();
+        };
+
+        function evaluateCauldronBrew() {
+            let curX = 0, curY = 0;
+            let totalUpa = { pyro: 0, hidro: 0, aero: 0, geo: 0, lux: 0, abysso: 0, vita: 0, venom: 0 };
+
+            cauldronState.ingredients.forEach(ci => {
+                curX += ci.vx;
+                curY += ci.vy;
+                Object.keys(totalUpa).forEach(k => totalUpa[k] += (ci.upa[k] || 0));
+            });
+
+            if (!cauldronState.recipeId) {
+                return { valid: true, statusText: "Elaboración Libre (Válida)", tierAchieved: "N/A", deviation: "N/A" };
+            }
+
+            const rec = db.potions.find(p => p.id === cauldronState.recipeId);
+            if (!rec) return { valid: false, statusText: "Receta no encontrada", tierAchieved: "N/A", deviation: "N/A" };
+
+            const baseEntry = rec.baseCoords && rec.baseCoords[cauldronState.baseId];
+            const baseCompatible = baseEntry ? (baseEntry.enabled !== false) : false;
+
+            if (!baseCompatible) {
+                return { valid: false, statusText: "Base incompatible con esta receta", tierAchieved: "N/A", deviation: "N/A" };
+            }
+
+            const dev = Math.sqrt(Math.pow(curX - baseEntry.xo, 2) + Math.pow(curY - baseEntry.yo, 2));
+            const geoOk = dev <= rec.tolerance;
+            if (!geoOk) {
+                return { valid: false, statusText: `Fuera de tolerancia geométrica (D = ${dev.toFixed(2)} > Máx ${rec.tolerance})`, tierAchieved: "N/A", deviation: dev.toFixed(2) };
+            }
+
+            // Comprobación de afinidades prohibidas
+            if (rec.forbiddenAffs && rec.forbiddenAffs.length > 0) {
+                for (const fAff of rec.forbiddenAffs) {
+                    const uVal = totalUpa[fAff] || 0;
+                    if (uVal > 0) {
+                        return { valid: false, statusText: `Afinidad prohibida detectada (${fAff.toUpperCase()}: ${uVal} UPA)`, tierAchieved: "N/A", deviation: dev.toFixed(2) };
+                    }
+                }
+            }
+
+            // Comprobación de ingrediente específico con distinción Normal / Procesado
+            if (rec.reqIngId) {
+                const reqQty = rec.reqQty || 1;
+                const reqType = rec.reqType || 'any'; // 'any', 'normal', 'procesado'
+                const matchingIngs = cauldronState.ingredients.filter(ci => {
+                    if (ci.ingredientId !== rec.reqIngId) return false;
+                    if (reqType === 'normal') return ci.type === 'normal';
+                    if (reqType === 'procesado') return ci.type === 'procesado';
+                    return true;
+                });
+                if (matchingIngs.length < reqQty) {
+                    return { valid: false, statusText: `Falta ingrediente específico requerido (Tipo: ${reqType}, Cantidad: ${matchingIngs.length}/${reqQty})`, tierAchieved: "N/A", deviation: dev.toFixed(2) };
+                }
+            }
+
+            // Evaluación de Potencias (Multitier)
+            let achievedTier = "Ninguna";
+            const tiers = rec.tiers || [];
+            // Comprobar de mayor a menor (III -> II -> I)
+            for (let tIdx = tiers.length - 1; tIdx >= 0; tIdx--) {
+                const tier = tiers[tIdx];
+                if (!tier.aff || tier.upaMin === undefined) continue;
+                const uVal = totalUpa[tier.aff] || 0;
+                if (uVal >= tier.upaMin) {
+                    achievedTier = `Potencia ${tIdx + 1} (${tier.aff.toUpperCase()}: ${uVal}/${tier.upaMin})`;
+                    break;
+                }
+            }
+
+            if (achievedTier === "Ninguna" && tiers.length > 0) {
+                return { valid: false, statusText: "UPA insuficiente para alcanzar el requisito mínimo de potencia", tierAchieved: "Ninguna", deviation: dev.toFixed(2) };
+            }
+
+            return { valid: true, statusText: `Elaboración Exitosa (${achievedTier})`, tierAchieved: achievedTier, deviation: dev.toFixed(2) };
+        }
+
+        function updateCauldronState() {
+            cauldronState.baseId = parseInt(document.getElementById('cauldron-base-select').value) || 1;
+            cauldronState.recipeId = document.getElementById('cauldron-recipe-select').value;
+
+            const listEl = document.getElementById('cauldron-ingredients-list');
+            listEl.innerHTML = cauldronState.ingredients.length === 0
+                ? `<small style="color:var(--text-muted)">Caldero vacío (P₀ = 0; 0).</small>`
+                : cauldronState.ingredients.map((ci, idx) => `
+                    <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.85rem; margin-bottom:0.3rem; background:var(--bg-card); padding:0.3rem;">
+                        <span>${idx + 1}. ${ci.name} (V: ${ci.vx}; ${ci.vy})</span>
+                        <button type="button" class="btn btn-danger" style="padding:0.1rem 0.35rem; font-size:0.65rem;" onclick="removeIngredientFromCauldron(${idx})">X</button>
+                    </div>
+                `).join('');
+
+            let curX = 0, curY = 0;
+            const trajectory = [`(0; 0)`];
+            let totalUpa = { pyro: 0, hidro: 0, aero: 0, geo: 0, lux: 0, abysso: 0, vita: 0, venom: 0 };
+
+            cauldronState.ingredients.forEach(ci => {
+                curX += ci.vx;
+                curY += ci.vy;
+                trajectory.push(`(${curX}; ${curY})`);
+                Object.keys(totalUpa).forEach(k => totalUpa[k] += (ci.upa[k] || 0));
+            });
+
+            document.getElementById('cauldron-trajectory-display').innerText = `Trayectoria T = { ${trajectory.join(' → ')} }`;
+            document.getElementById('cauldron-upa-display').innerHTML = Object.entries(totalUpa).map(([k, v]) => `<div class="upa-tag"><label>${k.toUpperCase()}</label><strong>${v}</strong></div>`).join('');
+
+            let posText = `Posición final Pf: <strong>(${curX}; ${curY})</strong>`;
+            let statusHTML = "Modo de elaboración libre.";
+
+            if (cauldronState.recipeId) {
+                const rec = db.potions.find(p => p.id === cauldronState.recipeId);
+                if (rec) {
+                    const baseEntry = rec.baseCoords && rec.baseCoords[cauldronState.baseId];
+                    const baseCompatible = baseEntry ? (baseEntry.enabled !== false) : false;
+
+                    if (!baseCompatible) {
+                        posText += ` | <span style="color:#e05638;">Base incompatible con esta receta</span>`;
+                        statusHTML = `<span style="color:#e05638;">✕ Esta receta no es compatible con la base seleccionada.</span>`;
+                    } else {
+                        const dev = Math.sqrt(Math.pow(curX - baseEntry.xo, 2) + Math.pow(curY - baseEntry.yo, 2));
+                        posText += ` | Objetivo (Base ${cauldronState.baseId}): (${baseEntry.xo}; ${baseEntry.yo}) | Desviación D: <strong>${dev.toFixed(2)}</strong> (Máx: ${rec.tolerance})`;
+
+                        const evalResult = evaluateCauldronBrew();
+                        statusHTML = `
+                            <div>${evalResult.valid ? `<span style="color:#56e073;">✓ ${evalResult.statusText}</span>` : `<span style="color:#e05638;">✕ ${evalResult.statusText}</span>`}</div>
+                        `;
+                    }
+                }
+            }
+            document.getElementById('cauldron-pos-display').innerHTML = posText;
+            document.getElementById('cauldron-result-status').innerHTML = statusHTML;
+        }
+
+        function executeElaboration() {
+            if (cauldronState.ingredients.length === 0) { alert("Caldero vacío."); return; }
+
+            const counts = {};
+            cauldronState.ingredients.forEach(ci => { counts[ci.instanceId] = (counts[ci.instanceId] || 0) + 1; });
+            for (const [instId, reqQty] of Object.entries(counts)) {
+                const invItem = db.inventory.find(i => i.instanceId === instId);
+                if (!invItem || invItem.qty < reqQty) { alert("Stock insuficiente en el almacén."); return; }
+            }
+
+            const evalResult = evaluateCauldronBrew();
+
+            // REGLA 4: El caldero NO consume ingredientes si la elaboración no es válida
+            if (!evalResult.valid) {
+                alert(`¡Elaboración fallida o no válida! Motivo: ${evalResult.statusText}.
+El caldero ha protegido tus ingredientes y NO se han consumido.`);
+                return;
+            }
+
+            // Consumir ingredientes solo si la elaboración es válida
+            for (const [instId, reqQty] of Object.entries(counts)) {
+                db.inventory.find(i => i.instanceId === instId).qty -= reqQty;
+            }
+            db.inventory = db.inventory.filter(i => i.qty > 0);
+
+            let curX = 0, curY = 0;
+            cauldronState.ingredients.forEach(ci => { curX += ci.vx; curY += ci.vy; });
+            const bases = getOfficialBasesList();
+            const baseObj = bases.find(b => b.id === cauldronState.baseId);
+            const rec = cauldronState.recipeId ? db.potions.find(p => p.id === cauldronState.recipeId) : null;
+
+            db.brewHistory.unshift({
+                day: db.currentDay,
+                potionName: rec ? rec.name : "Mezcla Experimental",
+                baseName: baseObj ? baseObj.name : "Desconocida",
+                potency: evalResult.tierAchieved,
+                finalPos: `(${curX}; ${curY})`,
+                deviation: evalResult.deviation,
+                status: "Exitosa"
+            });
+
+            StorageService.save(db);
+            renderInventoryTable();
+            renderInventorySelects();
+            cauldronState.ingredients = [];
+            initCauldronUI();
+            alert(`¡Elaboración exitosa registrada en la bitácora!
+Resultado: ${evalResult.statusText}`);
+        }
+
+        function renderHistoryTable() {
+            const tbody = document.getElementById('history-table-body');
+            if (!db.brewHistory || db.brewHistory.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="color:var(--text-muted); text-align:center;">Aún no hay elaboraciones registradas en la bitácora.</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = db.brewHistory.map(h => `
+                <tr>
+                    <td>Día ${h.day}</td>
+                    <td><strong>${h.potionName}</strong></td>
+                    <td>${h.baseName}</td>
+                    <td><span class="badge" style="background:var(--accent-blue);">${h.potency}</span></td>
+                    <td>${h.finalPos}</td>
+                    <td>${h.deviation}</td>
+                    <td><span class="badge" style="background:var(--accent-green); color:black;">${h.status}</span></td>
+                </tr>
+            `).join('');
+        }
+
+        // Biblioteca de Pociones (Multitier & Prohibidas)
+        function savePotion(e) {
+            e.preventDefault();
+            const id = document.getElementById('pot-id').value || 'pot-' + Date.now();
+            const name = document.getElementById('pot-name').value.trim();
+            const effect = document.getElementById('pot-effect').value.trim();
+            const tolerance = parseFloat(document.getElementById('pot-tolerance').value) || 2.0;
+            const reqIngId = document.getElementById('pot-req-ing').value;
+            const reqQty = parseInt(document.getElementById('pot-req-qty').value) || 1;
+            const reqType = document.getElementById('pot-req-type').value;
+            const desc = document.getElementById('pot-desc').value.trim();
+
+            const baseCoords = {};
+            document.querySelectorAll('.pot-base-enabled').forEach(chk => {
+                const bId = chk.getAttribute('data-baseid');
+                const enabled = chk.checked;
+                const xo = parseInt(document.querySelector(`.pot-base-xo[data-baseid="${bId}"]`).value) || 0;
+                const yo = parseInt(document.querySelector(`.pot-base-yo[data-baseid="${bId}"]`).value) || 0;
+                if (enabled) {
+                    baseCoords[bId] = { enabled: true, xo, yo };
+                }
+            });
+
+            // Tiers (Multitier)
+            const tiers = [
+                { aff: document.getElementById('pot-tier1-aff').value, upaMin: parseInt(document.getElementById('pot-tier1-upa').value) || 0 },
+                { aff: document.getElementById('pot-tier2-aff').value, upaMin: parseInt(document.getElementById('pot-tier2-upa').value) || 0 },
+                { aff: document.getElementById('pot-tier3-aff').value, upaMin: parseInt(document.getElementById('pot-tier3-upa').value) || 0 }
+            ];
+
+            // Afinidades prohibidas
+            const forbiddenAffs = Array.from(document.querySelectorAll('input[name="pot-forbidden-chk"]:checked')).map(el => el.value);
+
+            const idx = db.potions.findIndex(p => p.id === id);
+            const pData = { id, name, effect, tolerance, baseCoords, tiers, forbiddenAffs, reqIngId, reqQty, reqType, desc };
+            if (idx >= 0) db.potions[idx] = pData;
+            else db.potions.push(pData);
+
+            StorageService.save(db);
+            renderPotions();
+            resetPotionForm();
+        }
+
+        function resetPotionForm() {
+            document.getElementById('potion-form').reset();
+            document.getElementById('pot-id').value = '';
+            renderPotionBaseInputs();
+            renderForbiddenAffCheckboxes();
+        }
+
+        window.editPotion = function(id) {
+            const p = db.potions.find(pot => pot.id === id);
+            if (!p) return;
+            document.getElementById('pot-id').value = p.id;
+            document.getElementById('pot-name').value = p.name;
+            document.getElementById('pot-effect').value = p.effect;
+            document.getElementById('pot-tolerance').value = p.tolerance;
+            document.getElementById('pot-req-ing').value = p.reqIngId || '';
+            document.getElementById('pot-req-qty').value = p.reqQty || 1;
+            document.getElementById('pot-req-type').value = p.reqType || 'any';
+            document.getElementById('pot-desc').value = p.desc;
+            renderPotionBaseInputs(p.baseCoords || {});
+
+            const tiers = p.tiers || [];
+            if (tiers[0]) {
+                document.getElementById('pot-tier1-aff').value = tiers[0].aff || '';
+                document.getElementById('pot-tier1-upa').value = tiers[0].upaMin || 0;
+            }
+            if (tiers[1]) {
+                document.getElementById('pot-tier2-aff').value = tiers[1].aff || '';
+                document.getElementById('pot-tier2-upa').value = tiers[1].upaMin || 0;
+            }
+            if (tiers[2]) {
+                document.getElementById('pot-tier3-aff').value = tiers[2].aff || '';
+                document.getElementById('pot-tier3-upa').value = tiers[2].upaMin || 0;
+            }
+
+            renderForbiddenAffCheckboxes(p.forbiddenAffs || []);
+        };
+
+        window.deletePotion = function(id) {
+            if (!confirm("¿Eliminar esta receta?")) return;
+            db.potions = db.potions.filter(p => p.id !== id);
+            StorageService.save(db);
+            renderPotions();
+        };
+
+        function renderPotions() {
+            const bases = getOfficialBasesList();
+            document.getElementById('potions-list').innerHTML = db.potions.map(p => {
+                const basesText = Object.entries(p.baseCoords || {})
+                    .filter(([, cfg]) => cfg && cfg.enabled !== false)
+                    .map(([bId, coords]) => {
+                        const bObj = bases.find(b => b.id == bId);
+                        return `${bObj ? bObj.name : 'Base ' + bId}: (${coords.xo}; ${coords.yo})`;
+                    }).join(' | ');
+
+                const tiersDesc = (p.tiers || []).map((t, idx) => t.aff ? `T${idx+1}: ${t.aff.toUpperCase()} (≥${t.upaMin})` : '').filter(Boolean).join(' | ');
+                const forbDesc = (p.forbiddenAffs || []).length > 0 ? `<span style="color:#e05638;">Prohibidas: ${p.forbiddenAffs.join(', ').toUpperCase()}</span>` : '';
+
+                return `
+                    <div class="card" style="margin-bottom:0.7rem;">
+                        <div class="card-title">${p.name}</div>
+                        <p style="font-size:0.85rem; margin-bottom:0.3rem;"><strong>Efecto:</strong> ${p.effect}</p>
+                        <p style="font-size:0.75rem; color:var(--accent-gold); margin-bottom:0.3rem;"><strong>Bases y Objetivos:</strong> ${basesText || 'Ninguna base'}</p>
+                        <p style="font-size:0.75rem; color:#56e073; margin-bottom:0.3rem;"><strong>Potencias:</strong> ${tiersDesc || 'Estándar'}</p>
+                        ${forbDesc ? `<p style="font-size:0.75rem; margin-bottom:0.3rem;">${forbDesc}</p>` : ''}
+                        <div class="actions-bar">
+                            <button type="button" class="btn" style="padding:0.25rem 0.6rem; font-size:0.72rem;" onclick="editPotion('${p.id}')">Editar</button>
+                            <button type="button" class="btn btn-danger" style="padding:0.25rem 0.6rem; font-size:0.72rem;" onclick="deletePotion('${p.id}')">Eliminar</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function exportData() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db, null, 2));
+            const dl = document.createElement('a');
+            dl.setAttribute("href", dataStr);
+            dl.setAttribute("download", `nyvra_alquimia_definitiva_${Date.now()}.json`);
+            document.body.appendChild(dl);
+            dl.click();
+            dl.remove();
+        }
+
+        function importDataPrompt() {
+            const jsonText = prompt("Pega aquí el contenido JSON de tu respaldo:");
+            if (!jsonText) return;
+            try {
+                const parsed = JSON.parse(jsonText);
+                StorageService.save(parsed);
+                location.reload();
+            } catch (e) {
+                alert("Error al importar JSON: " + e.message);
+            }
+        }
+
+        function resetAllWorkshop() {
+            if (!confirm("¿Seguro que deseas restaurar el taller a sus valores iniciales? Se borrarán los datos locales actuales.")) return;
+            localStorage.removeItem(StorageService.KEY);
+            location.reload();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initNavigation();
+            document.getElementById('current-day-display').innerText = db.currentDay;
+            document.getElementById('btn-pass-day').addEventListener('click', passDay);
+            document.getElementById('btn-export').addEventListener('click', exportData);
+            document.getElementById('btn-import').addEventListener('click', importDataPrompt);
+            document.getElementById('btn-reset-all').addEventListener('click', resetAllWorkshop);
+
+            document.getElementById('ingredient-form').addEventListener('submit', saveIngredient);
+            document.getElementById('btn-cancel-ing').addEventListener('click', resetIngredientForm);
+            document.getElementById('search-ing').addEventListener('input', renderIngredients);
+
+            document.getElementById('base-form').addEventListener('submit', saveCustomBase);
+
+            document.getElementById('btn-add-inv').addEventListener('click', addToInventory);
+            document.getElementById('inv-type-select').addEventListener('change', function() {
+                document.getElementById('inv-process-tag').style.display = this.value === 'procesado' ? 'block' : 'none';
+            });
+            document.getElementById('filter-inv-name').addEventListener('input', renderInventoryTable);
+            document.getElementById('filter-inv-state').addEventListener('change', renderInventoryTable);
+
+            document.getElementById('proc-method-select').addEventListener('change', updateProcessDefaults);
+            document.getElementById('proc-inv-select').addEventListener('change', updateProcessPreview);
+            document.getElementById('proc-mod-vx').addEventListener('input', updateProcessPreview);
+            document.getElementById('proc-mod-vy').addEventListener('input', updateProcessPreview);
+            document.getElementById('proc-mod-upa').addEventListener('input', updateProcessPreview);
+            document.getElementById('process-form').addEventListener('submit', startProcessing);
+
+            document.getElementById('cauldron-base-select').addEventListener('change', updateCauldronState);
+            document.getElementById('cauldron-recipe-select').addEventListener('change', updateCauldronState);
+            document.getElementById('btn-cauldron-add').addEventListener('click', addIngredientToCauldron);
+            document.getElementById('btn-cauldron-clear').addEventListener('click', () => { cauldronState.ingredients = []; updateCauldronState(); });
+            document.getElementById('btn-cauldron-brew').addEventListener('click', executeElaboration);
+
+            document.getElementById('btn-clear-history').addEventListener('click', () => {
+                if (!confirm("¿Limpiar el historial de elaboraciones?")) return;
+                db.brewHistory = [];
+                StorageService.save(db);
+                renderHistoryTable();
+            });
+
+            document.getElementById('potion-form').addEventListener('submit', savePotion);
+            document.getElementById('btn-cancel-pot').addEventListener('click', resetPotionForm);
+
+            refreshAllUI();
+        });
+    </script>
 </body>
 </html>
